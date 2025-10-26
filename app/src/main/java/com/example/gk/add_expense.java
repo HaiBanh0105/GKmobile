@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executors;
 
-public class add_expense extends AppCompatActivity {
+public class add_expense extends BaseActivity {
 
     private EditText edttitle;
     private EditText edtamount;
@@ -51,6 +51,7 @@ public class add_expense extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.add_expense);
+        setupToolbar(R.id.toolbarDashboard);
 
         initUi();
 

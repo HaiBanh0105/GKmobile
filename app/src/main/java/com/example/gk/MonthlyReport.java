@@ -14,7 +14,6 @@ public class MonthlyReport {
     public double totalExpense;    // Tổng chi tiêu
     public long generatedAt;       // Thời điểm tạo báo cáo
 
-
     public MonthlyReport(){
 
     }

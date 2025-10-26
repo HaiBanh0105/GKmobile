@@ -8,14 +8,9 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_search"
-        android:title="Tìm kiếm"
+        android:id="@+id/menu_dashboard"
+        android:title="Dashboard"
         android:icon="@drawable/search"
         app:showAsAction="never" />
 
-    <item
-        android:id="@+id/menu_settings"
-        android:title="Cài đặt"
-        android:icon="@drawable/setting"
-        app:showAsAction="never" />
 </menu>

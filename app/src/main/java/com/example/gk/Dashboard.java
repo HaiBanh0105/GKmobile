@@ -43,7 +43,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.Executors;
 
-public class Dashboard extends AppCompatActivity {
+public class Dashboard extends BaseActivity {
     TextView tvTotalIncome;
     TextView tvTotalExpense;
     Spinner spinnerMonth;
@@ -58,6 +58,8 @@ public class Dashboard extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.dashboard);
+
+        setupToolbar(R.id.toolbarDashboard);
 
         initUi();
 
@@ -76,20 +78,20 @@ public class Dashboard extends AppCompatActivity {
         });
 
 
-        toolbar.setOnMenuItemClickListener(item -> {
-            int id = item.getItemId();
-            if (id == R.id.menu_statistics) {
-                startActivity(new Intent(Dashboard.this, Statistics.class));
-                return true;}
-//            else if (id == R.id.menu_search) {
-//                startActivity(new Intent(Dashboard.this, SearchActivity.class));
-//                return true;
-//            } else if (id == R.id.menu_settings) {
-//                startActivity(new Intent(Dashboard.this, SettingsActivity.class));
-//                return true;
-//            }
-            return false;
-        });
+//        toolbar.setOnMenuItemClickListener(item -> {
+//            int id = item.getItemId();
+//            if (id == R.id.menu_statistics) {
+//                startActivity(new Intent(Dashboard.this, Statistics.class));
+//                return true;}
+////            else if (id == R.id.menu_search) {
+////                startActivity(new Intent(Dashboard.this, SearchActivity.class));
+////                return true;
+////            } else if (id == R.id.menu_settings) {
+////                startActivity(new Intent(Dashboard.this, SettingsActivity.class));
+////                return true;
+////            }
+//            return false;
+//        });
 
 
         String[] months = {"Không chọn", "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6"
