@@ -35,20 +35,62 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Bộ lọc tháng -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Chọn tháng"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:layout_marginBottom="4dp" />
 
-            <Spinner
-                android:id="@+id/spinnerMonth"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp" />
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp"
+                android:gravity="center_vertical"
+                android:weightSum="2">
+
+                <TextView
+                    android:id="@+id/tvLabelYear"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Chọn năm"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:id="@+id/tvLabelMonth"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Chọn tháng"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Bộ lọc năm + tháng nằm ngang -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp"
+                android:gravity="center_vertical"
+                android:weightSum="2">
+
+                <EditText
+                    android:id="@+id/edtYear"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Năm (2025)"
+                    android:inputType="number"
+                    android:padding="8dp"
+                    android:background="@android:drawable/edit_text"
+                    android:layout_marginEnd="8dp" />
+
+                <Spinner
+                    android:id="@+id/spinnerMonth"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="8dp" />
+            </LinearLayout>
 
             <!-- Tổng thu / chi -->
             <LinearLayout
@@ -79,12 +121,28 @@
                     android:textStyle="bold" />
             </LinearLayout>
 
-            <!-- Biểu đồ tròn -->
-            <com.github.mikephil.charting.charts.PieChart
-                android:id="@+id/pieChart"
+            <!-- Biểu đồ tròn: Chi tiêu và Thu nhập-->
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:layout_marginBottom="16dp" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp"
+                android:weightSum="2">
+
+                <com.github.mikephil.charting.charts.PieChart
+                    android:id="@+id/pieChartExpense"
+                    android:layout_width="0dp"
+                    android:layout_height="300dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp" />
+
+                <com.github.mikephil.charting.charts.PieChart
+                    android:id="@+id/pieChartIncome"
+                    android:layout_width="0dp"
+                    android:layout_height="300dp"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
 
             <!-- Biểu đồ cột -->
             <com.github.mikephil.charting.charts.BarChart
