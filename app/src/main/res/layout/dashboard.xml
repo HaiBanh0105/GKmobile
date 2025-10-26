@@ -121,6 +121,13 @@
                     android:textStyle="bold" />
             </LinearLayout>
 
+            <!-- Biểu đồ cột -->
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/barChart"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_marginBottom="16dp" />
+
             <!-- Biểu đồ tròn: Chi tiêu và Thu nhập-->
             <LinearLayout
                 android:layout_width="match_parent"
@@ -141,15 +148,8 @@
                     android:layout_width="0dp"
                     android:layout_height="300dp"
                     android:layout_weight="1" />
+
             </LinearLayout>
-
-
-            <!-- Biểu đồ cột -->
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barChart"
-                android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:layout_marginBottom="16dp" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

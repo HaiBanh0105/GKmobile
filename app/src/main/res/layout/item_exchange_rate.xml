@@ -31,15 +31,19 @@
 
     <ImageButton
         android:id="@+id/btnEdit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@android:drawable/ic_menu_edit"
-        android:background="?attr/selectableItemBackgroundBorderless" />
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/edit"
+        android:scaleType="centerInside"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Chỉnh sửa" />
 
     <ImageButton
         android:id="@+id/btnDelete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@android:drawable/ic_menu_delete"
-        android:background="?attr/selectableItemBackgroundBorderless" />
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/delete"
+        android:scaleType="centerInside"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Chỉnh sửa" />
 </LinearLayout>

@@ -20,6 +20,7 @@ import com.example.gk.Database.ExchangeDAO;
 import com.example.gk.Database.ExpenseDAO;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
@@ -32,26 +33,25 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.Executors;
 
 public class Dashboard extends AppCompatActivity {
-
     TextView tvTotalIncome;
     TextView tvTotalExpense;
     Spinner spinnerMonth;
     EditText edtYear;
-
     PieChart pieChartExpense;
     PieChart pieChartIncome;
     BarChart barChart;
-
-
+    MaterialToolbar toolbar;
     FloatingActionButton AddExpense;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,15 +59,13 @@ public class Dashboard extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.dashboard);
 
-        tvTotalIncome = findViewById(R.id.tvTotalIncome);
-        tvTotalExpense = findViewById(R.id.tvTotalExpense);
+        initUi();
 
-        pieChartExpense = findViewById(R.id.pieChartExpense);
-        pieChartIncome = findViewById(R.id.pieChartIncome);
+        edtYear.setText("2025");
 
-        barChart = findViewById(R.id.barChart);
-
-        AddExpense = findViewById(R.id.btnAddExpense);
+        pieChartExpense.setDescription(null);
+        pieChartIncome.setDescription(null);
+        barChart.setDescription(null);
 
         AddExpense.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,7 +75,7 @@ public class Dashboard extends AppCompatActivity {
             }
         });
 
-        MaterialToolbar toolbar = findViewById(R.id.toolbarDashboard);
+
         toolbar.setOnMenuItemClickListener(item -> {
             int id = item.getItemId();
             if (id == R.id.menu_statistics) {
@@ -93,9 +91,10 @@ public class Dashboard extends AppCompatActivity {
             return false;
         });
 
-        spinnerMonth = findViewById(R.id.spinnerMonth);
+
         String[] months = {"Không chọn", "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6"
                 , "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11","Tháng 12"};
+
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, months);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerMonth.setAdapter(adapter);
@@ -107,7 +106,6 @@ public class Dashboard extends AppCompatActivity {
             @Override public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        edtYear = findViewById(R.id.edtYear);
         edtYear.addTextChangedListener(new TextWatcher() {
             @Override public void afterTextChanged(Editable s) { loadSummaryInVND(); }
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -115,6 +113,23 @@ public class Dashboard extends AppCompatActivity {
         });
     }
 
+    private void initUi(){
+        edtYear = findViewById(R.id.edtYear);
+
+        tvTotalIncome = findViewById(R.id.tvTotalIncome);
+        tvTotalExpense = findViewById(R.id.tvTotalExpense);
+
+        pieChartExpense = findViewById(R.id.pieChartExpense);
+        pieChartIncome = findViewById(R.id.pieChartIncome);
+
+        barChart = findViewById(R.id.barChart);
+        AddExpense = findViewById(R.id.btnAddExpense);
+
+        toolbar = findViewById(R.id.toolbarDashboard);
+
+        spinnerMonth = findViewById(R.id.spinnerMonth);
+
+    }
 
     private void updatePieChartByCategory(List<Expense> expenses, ExchangeDAO exchangeDAO, boolean isIncome, PieChart chart) {
         Map<String, Double> categoryTotals = new HashMap<>();
@@ -238,8 +253,12 @@ public class Dashboard extends AppCompatActivity {
             final double totalExpenseVND = expense;
 
             runOnUiThread(() -> {
-                tvTotalIncome.setText("Thu: " + String.format("%.0f VND", totalIncomeVND));
-                tvTotalExpense.setText("Chi: " + String.format("%.0f VND", totalExpenseVND));
+                NumberFormat formatter = NumberFormat.getInstance(new Locale("vi", "VN"));
+                String incomeStr = formatter.format(totalIncomeVND);
+                String expenseStr = formatter.format(totalExpenseVND);
+
+                tvTotalIncome.setText("Thu: " + incomeStr + " VND");
+                tvTotalExpense.setText("Chi: " + expenseStr + " VND");
             });
 
             updatePieChartByCategory(filteredList, exchangeDAO, false, pieChartExpense); // Chi tiêu

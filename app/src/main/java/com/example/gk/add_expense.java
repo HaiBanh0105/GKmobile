@@ -59,8 +59,8 @@ public class add_expense extends AppCompatActivity {
         loadCurrencyList();
 
         btnManageCurrency.setOnClickListener(v -> {
-            Intent intent = new Intent(add_expense.this, ExchangeRateActivity.class);
-            startActivity(intent);
+            ExchangeRateDialogFragment dialog = new ExchangeRateDialogFragment();
+            dialog.show(getSupportFragmentManager(), "ExchangeRateDialog");
         });
 
         List<String> categories = Arrays.asList("Ăn uống", "Giải trí", "Lương", "Hóa đơn");
