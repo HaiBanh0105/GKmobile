@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -55,6 +56,9 @@ public class Dashboard extends BaseActivity {
     BarChart barChart;
     MaterialToolbar toolbar;
     FloatingActionButton AddExpense;
+    FloatingActionButton Export;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,6 +108,30 @@ public class Dashboard extends BaseActivity {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
         });
+
+        Export.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String yearText = edtYear.getText().toString().trim();
+                int monthText = spinnerMonth.getSelectedItemPosition();
+
+                if (yearText.isEmpty()) {
+                    Toast.makeText(Dashboard.this, "Vui lòng nhập năm trước khi xuất báo cáo", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (monthText == 0) {
+                    Toast.makeText(Dashboard.this, "Vui lòng chọn tháng trước khi xuất báo cáo", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Intent intent = new Intent(Dashboard.this, export_report.class);
+                intent.putExtra("month", monthText);
+                intent.putExtra("year", edtYear.getText().toString().trim());
+                intent.putExtra("totalIncome", tvTotalIncome.getText().toString().trim());
+                intent.putExtra("totalExpense", tvTotalExpense.getText().toString().trim());
+                intent.putExtra("Difference", tvDifference.getText().toString().trim());
+                startActivity(intent);
+            }
+        });
     }
 
     private void initUi(){
@@ -119,6 +147,7 @@ public class Dashboard extends BaseActivity {
 
         barChart = findViewById(R.id.barChart);
         AddExpense = findViewById(R.id.btnAddExpense);
+        Export = findViewById(R.id.btnExportPdf);
 
         toolbar = findViewById(R.id.toolbarDashboard);
 

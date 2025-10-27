@@ -92,7 +92,7 @@
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp" />
 
-                <!-- Tổng thu / chi nằm dọc bên phải -->
+
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
@@ -143,13 +143,44 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Nút thêm giao dịch -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btnAddExpense"
-        android:layout_width="wrap_content"
+<!--    &lt;!&ndash; Nút thêm giao dịch &ndash;&gt;-->
+<!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+<!--        android:id="@+id/btnAddExpense"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_gravity="bottom|end"-->
+<!--        android:layout_margin="24dp"-->
+<!--        android:contentDescription="Thêm giao dịch"-->
+<!--        android:src="@android:drawable/ic_input_add" />-->
+    <LinearLayout
+        android:id="@+id/bottomToolbar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="24dp"
-        android:contentDescription="Thêm giao dịch"
-        android:src="@android:drawable/ic_input_add" />
+        android:orientation="horizontal"
+        android:background="#FFFFFF"
+        android:padding="12dp"
+        android:layout_gravity="bottom"
+        android:elevation="4dp"
+        android:gravity="center">
+
+        <!-- Nút thêm giao dịch -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btnAddExpense"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:contentDescription="Thêm giao dịch"
+            android:src="@android:drawable/ic_input_add" />
+
+        <!-- Nút xuất PDF -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btnExportPdf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="Xuất báo cáo PDF"
+            android:src="@android:drawable/ic_menu_save"
+            android:layout_marginStart="24dp" />
+    </LinearLayout>
+
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

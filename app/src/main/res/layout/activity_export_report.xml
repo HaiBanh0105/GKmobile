@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/export"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center_horizontal">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="12dp"
+            android:paddingBottom="10dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Báo cáo PDF"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="#000000"
+                />
+
+
+            <TextView
+                android:id="@+id/btnCancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center_vertical"
+                android:clickable="true"
+                android:focusable="true"
+                android:text="Hủy"
+                android:textColor="#F44336"
+                android:textSize="16sp" />
+        </FrameLayout>
+
+        <!-- Khối thống kê -->
+        <TextView
+            android:id="@+id/tvMonthYear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:text="Tháng 10 / 2025"
+            android:textColor="#3F51B5"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:background="#F5F5F5"
+            android:elevation="2dp"
+            android:layout_marginBottom="32dp">
+
+            <TextView
+                android:id="@+id/tvTotalIncome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tổng thu: 0 ₫"
+                android:textSize="18sp"
+                android:textColor="#4CAF50"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp" />
+
+            <TextView
+                android:id="@+id/tvTotalExpense"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tổng chi: 0 ₫"
+                android:textSize="18sp"
+                android:textColor="#F44336"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp" />
+
+            <TextView
+                android:id="@+id/tvDifference"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Còn lại: 0 ₫"
+                android:textSize="18sp"
+                android:textColor="#000000"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Nút xuất PDF -->
+        <Button
+            android:id="@+id/btnExportPdf"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Xuất báo cáo PDF"
+            android:textSize="16sp"
+            android:backgroundTint="#2196F3"
+            android:textColor="#FFFFFF"
+            android:padding="12dp" />
+    </LinearLayout>
+</ScrollView>

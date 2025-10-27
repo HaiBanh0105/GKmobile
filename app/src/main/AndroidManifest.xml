@@ -11,7 +11,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.GK">
-
+        <activity
+            android:name=".export_report"
+            android:exported="false" />
         <activity
             android:name=".Dashboard"
             android:exported="true">
@@ -26,9 +28,9 @@
             android:exported="false" />
         <activity
             android:name=".add_expense"
-            android:exported="false"></activity>
+            android:exported="false" />
         <activity
-            android:name="ExchangeRateActivity"
+            android:name=".ExchangeRateActivity"
             android:exported="false" />
     </application>
 

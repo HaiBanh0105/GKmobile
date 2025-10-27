@@ -3,7 +3,7 @@
 
     <item
         android:id="@+id/menu_statistics"
-        android:title="Thống kê"
+        android:title="Chi tiết"
         android:icon="@drawable/chart"
         app:showAsAction="never" />
 

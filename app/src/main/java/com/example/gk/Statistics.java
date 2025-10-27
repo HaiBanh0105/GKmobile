@@ -70,8 +70,13 @@ public class Statistics extends BaseActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerMonth.setAdapter(adapter);
 
+        int currentMonth = Calendar.getInstance().get(Calendar.MONTH) + 1; //lấy tháng hiện tại
+        spinnerMonth.setSelection(currentMonth);
+
         EditText edtYear = findViewById(R.id.edtYear);
-        edtYear.setText("2025");
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR); //Lấy năm hiện tại
+        edtYear.setText(String.valueOf(currentYear));
+
         EditText edtSearch = findViewById(R.id.edtSearch);
         spinnerMonth.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
