@@ -21,6 +21,7 @@ import com.example.gk.Database.ExpenseDAO;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
@@ -46,10 +47,11 @@ import java.util.concurrent.Executors;
 public class Dashboard extends BaseActivity {
     TextView tvTotalIncome;
     TextView tvTotalExpense;
+
+    TextView tvDifference;
     Spinner spinnerMonth;
     EditText edtYear;
-    PieChart pieChartExpense;
-    PieChart pieChartIncome;
+    PieChart pieChart;
     BarChart barChart;
     MaterialToolbar toolbar;
     FloatingActionButton AddExpense;
@@ -63,10 +65,11 @@ public class Dashboard extends BaseActivity {
 
         initUi();
 
-        edtYear.setText("2025");
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR); //Lấy năm hiện tại
+        edtYear.setText(String.valueOf(currentYear));
 
-        pieChartExpense.setDescription(null);
-        pieChartIncome.setDescription(null);
+        pieChart.setDescription(null);
+
         barChart.setDescription(null);
 
         AddExpense.setOnClickListener(new View.OnClickListener() {
@@ -78,21 +81,6 @@ public class Dashboard extends BaseActivity {
         });
 
 
-//        toolbar.setOnMenuItemClickListener(item -> {
-//            int id = item.getItemId();
-//            if (id == R.id.menu_statistics) {
-//                startActivity(new Intent(Dashboard.this, Statistics.class));
-//                return true;}
-////            else if (id == R.id.menu_search) {
-////                startActivity(new Intent(Dashboard.this, SearchActivity.class));
-////                return true;
-////            } else if (id == R.id.menu_settings) {
-////                startActivity(new Intent(Dashboard.this, SettingsActivity.class));
-////                return true;
-////            }
-//            return false;
-//        });
-
 
         String[] months = {"Không chọn", "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6"
                 , "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11","Tháng 12"};
@@ -100,6 +88,9 @@ public class Dashboard extends BaseActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, months);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerMonth.setAdapter(adapter);
+
+        int currentMonth = Calendar.getInstance().get(Calendar.MONTH) + 1; //lấy tháng hiện tại
+        spinnerMonth.setSelection(currentMonth);
 
         spinnerMonth.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -120,9 +111,11 @@ public class Dashboard extends BaseActivity {
 
         tvTotalIncome = findViewById(R.id.tvTotalIncome);
         tvTotalExpense = findViewById(R.id.tvTotalExpense);
+        tvDifference = findViewById(R.id.tvDifference);
 
-        pieChartExpense = findViewById(R.id.pieChartExpense);
-        pieChartIncome = findViewById(R.id.pieChartIncome);
+
+        pieChart = findViewById(R.id.pieChart);
+
 
         barChart = findViewById(R.id.barChart);
         AddExpense = findViewById(R.id.btnAddExpense);
@@ -133,69 +126,96 @@ public class Dashboard extends BaseActivity {
 
     }
 
-    private void updatePieChartByCategory(List<Expense> expenses, ExchangeDAO exchangeDAO, boolean isIncome, PieChart chart) {
-        Map<String, Double> categoryTotals = new HashMap<>();
-
-        for (Expense e : expenses) {
-            if (e.isIncome == isIncome) {
-                ExchangeRate rate = exchangeDAO.getRateByCurrency(e.currency);
-                double rateToVND = (rate != null) ? rate.rateToVND : 1.0;
-                double amountVND = e.amount * rateToVND;
-
-                categoryTotals.put(e.category,
-                        categoryTotals.getOrDefault(e.category, 0.0) + amountVND);
-            }
-        }
-
-        List<PieEntry> entries = new ArrayList<>();
-        for (Map.Entry<String, Double> entry : categoryTotals.entrySet()) {
-            entries.add(new PieEntry(entry.getValue().floatValue(), entry.getKey()));
-        }
-
-        PieDataSet dataSet = new PieDataSet(entries, isIncome ? "Thu nhập" : "Chi tiêu");
-        dataSet.setColors(ColorTemplate.MATERIAL_COLORS);
-        dataSet.setValueTextSize(14f);
-
-        PieData data = new PieData(dataSet);
-        chart.setData(data);
-        chart.setUsePercentValues(true);
-        chart.setEntryLabelTextSize(12f);
-        chart.setCenterText(isIncome ? "Thu nhập" : "Chi tiêu");
-        chart.setCenterTextSize(16f);
-        chart.invalidate();
-    }
-
-
-    private void updateBarChart(ExpenseDAO expenseDAO, ExchangeDAO exchangeDAO, String yearStr) {
+    private void updatePieChartByCategory(ExpenseDAO expenseDAO, ExchangeDAO exchangeDAO, String yearStr, int selectedMonth) {
         Executors.newSingleThreadExecutor().execute(() -> {
             List<Expense> all = expenseDAO.getExpensesByYearOnly(yearStr);
 
-            double[] incomeByMonth = new double[12];
-            double[] expenseByMonth = new double[12];
+            Map<String, Double> categoryTotals = new HashMap<>();
 
             for (Expense e : all) {
                 Calendar cal = Calendar.getInstance();
                 cal.setTimeInMillis(e.timestamp);
-                int month = cal.get(Calendar.MONTH); // 0–11
+                int month = cal.get(Calendar.MONTH) + 1;
+
+                if (month != selectedMonth) continue;
+                if (e.isIncome) continue;
+
+                ExchangeRate rate = exchangeDAO.getRateByCurrency(e.currency);
+                double rateToVND = (rate != null) ? rate.rateToVND : 1.0;
+                double amountVND = e.amount * rateToVND;
+
+                String category = e.category != null ? e.category : "Khác";
+                double currentTotal = categoryTotals.getOrDefault(category, 0.0);
+                categoryTotals.put(category, currentTotal + amountVND);
+            }
+
+            List<PieEntry> pieEntries = new ArrayList<>();
+            for (Map.Entry<String, Double> entry : categoryTotals.entrySet()) {
+                pieEntries.add(new PieEntry(entry.getValue().floatValue(), entry.getKey()));
+            }
+
+            PieDataSet pieDataSet = new PieDataSet(pieEntries, "");
+            pieDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+            pieDataSet.setValueTextSize(14f);
+            pieDataSet.setValueTextColor(Color.WHITE);
+
+            PieData pieData = new PieData(pieDataSet);
+
+            pieChart.setData(pieData);
+            pieChart.setUsePercentValues(true);
+            pieChart.setEntryLabelColor(Color.BLACK);
+            pieChart.setCenterText("Tỉ lệ chi tiêu");
+            pieChart.setCenterTextSize(16f);
+            pieChart.setDrawEntryLabels(false);
+
+            Description description = new Description();
+            description.setEnabled(false);
+            pieChart.setDescription(description);
+
+            Legend legend = pieChart.getLegend();
+            legend.setVerticalAlignment(Legend.LegendVerticalAlignment.CENTER);
+            legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
+            legend.setOrientation(Legend.LegendOrientation.VERTICAL);
+            legend.setDrawInside(false);
+            legend.setTextSize(15f);
+
+            pieChart.invalidate();
+        });
+    }
+
+
+
+
+    private void updateBarChart(ExpenseDAO expenseDAO, ExchangeDAO exchangeDAO, String yearStr, int selectedMonth) {
+        Executors.newSingleThreadExecutor().execute(() -> {
+            List<Expense> all = expenseDAO.getExpensesByYearOnly(yearStr);
+
+            double incomeTotal = 0;
+            double expenseTotal = 0;
+
+            for (Expense e : all) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTimeInMillis(e.timestamp);
+                int month = cal.get(Calendar.MONTH) + 1; // 1–12
+
+                if (month != selectedMonth) continue;
 
                 ExchangeRate rate = exchangeDAO.getRateByCurrency(e.currency);
                 double rateToVND = (rate != null) ? rate.rateToVND : 1.0;
                 double amountVND = e.amount * rateToVND;
 
                 if (e.isIncome) {
-                    incomeByMonth[month] += amountVND;
+                    incomeTotal += amountVND;
                 } else {
-                    expenseByMonth[month] += amountVND;
+                    expenseTotal += amountVND;
                 }
             }
 
             List<BarEntry> incomeEntries = new ArrayList<>();
             List<BarEntry> expenseEntries = new ArrayList<>();
 
-            for (int i = 0; i < 12; i++) {
-                incomeEntries.add(new BarEntry(i, (float) incomeByMonth[i]));
-                expenseEntries.add(new BarEntry(i, (float) expenseByMonth[i]));
-            }
+            incomeEntries.add(new BarEntry(0, (float) incomeTotal));
+            expenseEntries.add(new BarEntry(1, (float) expenseTotal));
 
             BarDataSet incomeSet = new BarDataSet(incomeEntries, "Thu nhập");
             incomeSet.setColor(Color.parseColor("#4CAF50"));
@@ -204,14 +224,26 @@ public class Dashboard extends BaseActivity {
             expenseSet.setColor(Color.parseColor("#F44336"));
 
             BarData barData = new BarData(incomeSet, expenseSet);
-            barData.setBarWidth(0.4f);
+            incomeSet.setDrawValues(false);
+            expenseSet.setDrawValues(false);
+
+
+            Legend legend = barChart.getLegend();
+            legend.setTextSize(14f);
+            legend.setTextColor(Color.DKGRAY);
 
             barChart.setData(barData);
-            barChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(
-                    Arrays.asList("T1","T2","T3","T4","T5","T6","T7","T8","T9","T10","T11","T12")));
             barChart.getXAxis().setGranularity(1f);
             barChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+            barChart.getXAxis().setCenterAxisLabels(true);
+            barChart.getXAxis().setAxisMinimum(-0.5f);
+            barChart.getXAxis().setAxisMaximum(2f);
             barChart.groupBars(0f, 0.2f, 0.02f);
+
+            barChart.getXAxis().setEnabled(false);
+            barChart.getAxisLeft().setEnabled(false);
+            barChart.getAxisRight().setEnabled(false);
+
             barChart.invalidate();
         });
     }
@@ -219,7 +251,7 @@ public class Dashboard extends BaseActivity {
 
     private void loadSummaryInVND() {
         final String yearStr = edtYear.getText().toString().trim();
-        final int monthIndex = spinnerMonth.getSelectedItemPosition(); // 0 = "Không chọn"
+        final int monthIndex = spinnerMonth.getSelectedItemPosition();
 
         if (yearStr.isEmpty()) return;
 
@@ -253,20 +285,21 @@ public class Dashboard extends BaseActivity {
 
             final double totalIncomeVND = income;
             final double totalExpenseVND = expense;
+            final double difference = totalIncomeVND - totalExpenseVND;
 
             runOnUiThread(() -> {
                 NumberFormat formatter = NumberFormat.getInstance(new Locale("vi", "VN"));
                 String incomeStr = formatter.format(totalIncomeVND);
                 String expenseStr = formatter.format(totalExpenseVND);
+                String differenceStr = formatter.format(difference);
 
                 tvTotalIncome.setText("Thu: " + incomeStr + " VND");
                 tvTotalExpense.setText("Chi: " + expenseStr + " VND");
+                tvDifference.setText("Còn lại: " + differenceStr + " VND");
             });
 
-            updatePieChartByCategory(filteredList, exchangeDAO, false, pieChartExpense); // Chi tiêu
-            updatePieChartByCategory(filteredList, exchangeDAO, true, pieChartIncome);   // Thu nhập
-
-            updateBarChart(expenseDAO, exchangeDAO, yearStr);
+            updatePieChartByCategory(expenseDAO, exchangeDAO, yearStr, monthIndex);
+            updateBarChart(expenseDAO, exchangeDAO, yearStr, monthIndex);
 
         });
     }

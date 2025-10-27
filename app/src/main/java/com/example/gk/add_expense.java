@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -37,6 +38,8 @@ public class add_expense extends BaseActivity {
 
 
     private Button btnAdd;
+
+    TextView btnCancel;
 
     private RadioButton radioIncome;
     private RadioButton radioExpense;
@@ -92,6 +95,14 @@ public class add_expense extends BaseActivity {
             @Override
             public void onClick(View v) {
                 addExpense();
+            }
+        });
+
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish(); // Đóng Activity hiện tại
             }
         });
 
@@ -153,6 +164,7 @@ public class add_expense extends BaseActivity {
         radioIncome = findViewById(R.id.radioIncome);
         radioExpense = findViewById(R.id.radioExpense);
         rcv = findViewById(R.id.rcv_expense);
+        btnCancel = findViewById(R.id.btnCancel);
     }
 
     private void loadCurrencyList() {
