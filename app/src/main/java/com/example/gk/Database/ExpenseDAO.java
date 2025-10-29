@@ -22,6 +22,18 @@ public interface ExpenseDAO {
     @Query("SELECT * FROM expenses WHERE strftime('%Y', datetime(timestamp / 1000, 'unixepoch')) = :year")
     List<Expense> getExpensesByYearOnly(String year);
 
+    @Query("SELECT SUM(amount) FROM expenses " +
+            "WHERE isIncome = 1 AND strftime('%Y', datetime(timestamp / 1000, 'unixepoch')) = :year " +
+            "AND strftime('%m', datetime(timestamp / 1000, 'unixepoch')) = :monthStr")
+    Double getTotalIncome(String year, String monthStr);
+
+    @Query("SELECT SUM(amount) FROM expenses " +
+            "WHERE isIncome = 0 AND strftime('%Y', datetime(timestamp / 1000, 'unixepoch')) = :year " +
+            "AND strftime('%m', datetime(timestamp / 1000, 'unixepoch')) = :monthStr")
+    Double getTotalExpense(String year, String monthStr);
+
+
+
 
 
 //    @Query("SELECT * FROM expenses WHERE strftime('%m', datetime(timestamp / 1000, 'unixepoch')) = :month AND strftime('%Y', datetime(timestamp / 1000, 'unixepoch')) = :year")

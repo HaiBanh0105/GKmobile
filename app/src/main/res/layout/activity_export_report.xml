@@ -55,6 +55,14 @@
             android:textSize="18sp"
             android:textStyle="bold" />
 
+        <!-- Danh sách chi tiêu -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rcv_expense"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginBottom="16dp" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
