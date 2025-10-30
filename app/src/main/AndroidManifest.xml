@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GK">
         <activity
-            android:name=".export_report"
+            android:name=".Export_report"
             android:exported="false" />
         <activity
             android:name=".Dashboard"
@@ -27,7 +27,7 @@
             android:name=".Statistics"
             android:exported="false" />
         <activity
-            android:name=".add_expense"
+            android:name=".Add_expense"
             android:exported="false" />
         <activity
             android:name=".ExchangeRateActivity"

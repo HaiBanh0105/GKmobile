@@ -13,11 +13,10 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.gk.Database.AppDatabase;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -26,18 +25,19 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.Executors;
 
-public class export_report extends AppCompatActivity {
-    TextView tvMonthYear, tvTotalIncome, tvTotalExpense, tvDifference;
-    Button btnExportPdf;
+public class Export_report extends AppCompatActivity {
 
-    TextView btnCancel;
+    // UI components
+    private TextView tvMonthYear, tvTotalIncome, tvTotalExpense, tvDifference, btnCancel;
+    private Button btnExportPdf;
+    private RecyclerView rcv;
 
-    RecyclerView rcv;
-
-    ArrayList<Expense> receivedList;
-
-
+    // Data
+    private ArrayList<Expense> receivedList;
+    private int month;
+    private String year;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +45,14 @@ public class export_report extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_export_report);
 
+        initViews();
+        loadIntentData();
+        setupRecyclerView();
+        displayReportInfo();
+        setupListeners();
+    }
+
+    private void initViews() {
         tvMonthYear = findViewById(R.id.tvMonthYear);
         tvTotalIncome = findViewById(R.id.tvTotalIncome);
         tvTotalExpense = findViewById(R.id.tvTotalExpense);
@@ -52,61 +60,52 @@ public class export_report extends AppCompatActivity {
         btnExportPdf = findViewById(R.id.btnExportPdf);
         btnCancel = findViewById(R.id.btnCancel);
         rcv = findViewById(R.id.rcv_expense);
+    }
 
-        int month = getIntent().getIntExtra("month", 0);
-        String year = getIntent().getStringExtra("year");
+    private void loadIntentData() {
+        month = getIntent().getIntExtra("month", 0);
+        year = getIntent().getStringExtra("year");
         String income = getIntent().getStringExtra("totalIncome");
         String expense = getIntent().getStringExtra("totalExpense");
         String difference = getIntent().getStringExtra("Difference");
         receivedList = (ArrayList<Expense>) getIntent().getSerializableExtra("ListExpense");
 
+        tvMonthYear.setTag("Tháng " + month + " / " + year);
+        tvTotalIncome.setTag(income);
+        tvTotalExpense.setTag(expense);
+        tvDifference.setTag(difference);
+    }
+
+    private void setupRecyclerView() {
         ExpenseAdapter adapter = new ExpenseAdapter();
         adapter.setData(receivedList);
-
-
         rcv.setLayoutManager(new LinearLayoutManager(this));
         rcv.setAdapter(adapter);
+    }
 
+    private void displayReportInfo() {
+        tvMonthYear.setText((String) tvMonthYear.getTag());
+        tvTotalIncome.setText("Tổng thu: " + tvTotalIncome.getTag() + " VND");
+        tvTotalExpense.setText("Tổng chi: " + tvTotalExpense.getTag() + " VND");
+        tvDifference.setText("Chênh lệch: " + tvDifference.getTag() + " VND");
+    }
 
-        // Hiển thị dữ liệu
-        tvMonthYear.setText("Tháng " + month + " / " + year);
-        tvTotalIncome.setText("Tổng thu: " + income);
-        tvTotalExpense.setText("Tổng chi: " + expense);
-        tvDifference.setText("Còn: " + difference);
-
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish(); // Đóng Activity hiện tại
-            }
-        });
-
-        btnExportPdf.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                exportPdf();
-            }
-        });
-
+    private void setupListeners() {
+        btnCancel.setOnClickListener(v -> finish());
+        btnExportPdf.setOnClickListener(v -> exportPdf());
     }
 
     private void exportPdf() {
         String title = tvMonthYear.getText().toString();
-        String income = tvTotalIncome.getText().toString();
-        String expense = tvTotalExpense.getText().toString();
-        String difference = tvDifference.getText().toString();
-        ArrayList<Expense> receivedList = (ArrayList<Expense>) getIntent().getSerializableExtra("ListExpense");
+        String income = (String) tvTotalIncome.getTag();
+        String expense = (String) tvTotalExpense.getTag();
+        String difference = (String) tvDifference.getTag();
 
         Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
-        String currentTime = "Ngày tạo: " + sdf.format(date);
+        String currentTime = "Ngày tạo: " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(date);
 
         PdfDocument pdfDocument = new PdfDocument();
-        int pageWidth = 595;
-        int pageHeight = 842;
-        int margin = 40;
-        int rowHeight = 25;
-        int startY = 80;
+        int pageWidth = 595, pageHeight = 842, margin = 40, rowHeight = 25, startY = 80;
         int y = startY;
 
         Paint titlePaint = new Paint();
@@ -131,30 +130,23 @@ public class export_report extends AppCompatActivity {
         PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, 1).create();
         PdfDocument.Page page = pdfDocument.startPage(pageInfo);
         Canvas canvas = page.getCanvas();
-
         int centerX = pageWidth / 2;
 
-        // Tiêu đề
-        canvas.drawText("BÁO CÁO TÀI CHÍNH", centerX, y, titlePaint); y += 30;
+        // Header
+        canvas.drawText("BÁO CÁO THU CHI", centerX, y, titlePaint); y += 30;
         canvas.drawText(title, centerX, y, contentPaint); y += 30;
         canvas.drawLine(margin, y, pageWidth - margin, y, linePaint); y += 20;
 
-
-        // Vẽ tiêu đề cột
-        int col1 = margin;
-        int col2 = col1 + 150;
-        int col3 = col2 + 100;
-        int col4 = col3 + 80;
-
+        // Column titles
+        int col1 = margin, col2 = col1 + 150, col3 = col2 + 100, col4 = col3 + 80;
         canvas.drawText("Tên", col1 + 5, y, contentPaint);
         canvas.drawText("Số tiền", col2 + 5, y, contentPaint);
         canvas.drawText("Loại", col3 + 5, y, contentPaint);
         canvas.drawText("Ngày", col4 + 5, y, contentPaint);
         y += rowHeight;
-
         canvas.drawLine(margin, y, pageWidth - margin, y, linePaint); y += 5;
 
-        int itemCount = 0;
+        // Rows
         for (Expense e : receivedList) {
             if (y + rowHeight > pageHeight - 100) {
                 pdfDocument.finishPage(page);
@@ -175,25 +167,39 @@ public class export_report extends AppCompatActivity {
             canvas.drawText(formatDate(e.timestamp), col4 + 5, y + 17, contentPaint);
 
             y += rowHeight;
-            itemCount++;
         }
 
+        // Summary
         y += 20;
         canvas.drawLine(margin, y, pageWidth - margin, y, linePaint); y += 20;
-
-        canvas.drawText(income, margin, y, contentPaint); y += 20;
-        canvas.drawText(expense, margin, y, contentPaint); y += 20;
-        canvas.drawText(difference, margin, y, contentPaint); y += 30;
+        canvas.drawText("Tổng thu: " + income + " VND", margin, y, contentPaint); y += 20;
+        canvas.drawText("Tổng chi: " + expense + " VND", margin, y, contentPaint); y += 20;
+        canvas.drawText("Chênh lệch: " + difference + " VND", margin, y, contentPaint); y += 30;
 
         contentPaint.setTextAlign(Paint.Align.RIGHT);
         canvas.drawText(currentTime, pageWidth - margin, y, contentPaint);
 
         pdfDocument.finishPage(page);
 
+        // Save PDF
         File file = new File(getExternalFilesDir(null), "baocao_" + System.currentTimeMillis() + ".pdf");
         try {
             pdfDocument.writeTo(new FileOutputStream(file));
             Toast.makeText(this, "Đã lưu PDF thành công!", Toast.LENGTH_LONG).show();
+
+            // Save report to database
+            MonthlyReport report = new MonthlyReport();
+            report.setMonth(month);
+            report.setYear(Integer.parseInt(year));
+            report.setTotalIncome(Double.parseDouble(income));
+            report.setTotalExpense(Double.parseDouble(expense));
+            report.setGeneratedAt(System.currentTimeMillis());
+
+            Executors.newSingleThreadExecutor().execute(() -> {
+                AppDatabase db = AppDatabase.getInstance(this);
+                db.reportDAO().insertExpense(report);
+            });
+
             pdfDocument.close();
             finish();
         } catch (IOException e) {
@@ -202,12 +208,7 @@ public class export_report extends AppCompatActivity {
         }
     }
 
-
     private String formatDate(long timestamp) {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        return sdf.format(new Date(timestamp));
+        return new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date(timestamp));
     }
-
-
-
 }

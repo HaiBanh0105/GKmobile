@@ -1,7 +1,15 @@
-package com.example.gk;
+package com.example.gk.viewmodel;
+
+import android.content.Context;
 
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
+
+import com.example.gk.BR;
+import com.example.gk.Database.AppDatabase;
+import com.example.gk.Expense;
+
+import java.util.concurrent.Executors;
 
 public class ExpenseViewModel extends BaseObservable {
 
@@ -79,5 +87,12 @@ public class ExpenseViewModel extends BaseObservable {
         notifyPropertyChanged(BR.timestamp);
 
     }
+
+    public void saveExpense(Context context) {
+        Executors.newSingleThreadExecutor().execute(() -> {
+            AppDatabase.getInstance(context).expenseDAO().insertExpense(expense);
+        });
+    }
+
 
 }

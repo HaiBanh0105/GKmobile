@@ -3,8 +3,10 @@
 
     <data>
         <variable
-            name="ExpenseViewModel"
-            type="com.example.gk.ExpenseViewModel" />
+            name="expenseViewModel"
+            type="com.example.gk.viewmodel.ExpenseViewModel" />
+
+
     </data>
 
     <ScrollView
@@ -77,7 +79,7 @@
                             android:layout_height="wrap_content"
                             android:hint="Tiêu đề"
                             android:inputType="text"
-                            android:text="@={ExpenseViewModel.title}"
+                            android:text="@={expenseViewModel.title}"
                             android:background="@android:drawable/edit_text"
                             android:padding="10dp" />
 
@@ -87,15 +89,9 @@
                             android:layout_height="wrap_content"
                             android:hint="Số tiền"
                             android:inputType="numberDecimal"
-                            android:text="@={ExpenseViewModel.amount}"
+                            android:text="@={expenseViewModel.amount}"
                             android:background="@android:drawable/edit_text"
                             android:padding="10dp"
-                            android:layout_marginTop="8dp" />
-
-                        <Spinner
-                            android:id="@+id/category"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
                             android:layout_marginTop="8dp" />
 
                         <LinearLayout
@@ -105,13 +101,14 @@
                             android:layout_marginTop="8dp">
 
                             <Spinner
-                                android:id="@+id/currency"
+                                android:id="@+id/category"
                                 android:layout_width="0dp"
                                 android:layout_weight="1"
-                                android:layout_height="wrap_content" />
+                                android:layout_height="wrap_content"
+                                 />
 
                             <Button
-                                android:id="@+id/btnManageCurrency"
+                                android:id="@+id/btnManageCategory"
                                 android:layout_width="60dp"
                                 android:layout_height="40dp"
                                 android:text="+"
@@ -121,6 +118,14 @@
 
 
                         </LinearLayout>
+
+                        <Spinner
+                            android:id="@+id/currency"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"/>
+
+
 
                         <RadioGroup
                             android:id="@+id/radioGroupType"
