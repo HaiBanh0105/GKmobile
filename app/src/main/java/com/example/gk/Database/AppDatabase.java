@@ -6,11 +6,12 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
+import com.example.gk.CurrencyInfo;
 import com.example.gk.ExchangeRate;
 import com.example.gk.Expense;
 import com.example.gk.MonthlyReport;
 
-@Database(entities = {Expense.class, MonthlyReport.class, ExchangeRate.class}, version = 1)
+@Database(entities = {Expense.class, MonthlyReport.class, ExchangeRate.class, CurrencyInfo.class}, version = 2)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static final String DATABASE_NAME = "GK.db";
@@ -21,6 +22,7 @@ public abstract class AppDatabase extends RoomDatabase {
             instance = Room.databaseBuilder(context.getApplicationContext(),
                             AppDatabase.class,
                             DATABASE_NAME)
+                    .fallbackToDestructiveMigration()
                     .allowMainThreadQueries()
                     .build();
         }
@@ -30,4 +32,6 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract ExpenseDAO expenseDAO();
     public abstract ReportDAO reportDAO();
     public abstract ExchangeDAO exchangeDAO();
+    public abstract CurrencyDAO currencyDAO();
+
 }

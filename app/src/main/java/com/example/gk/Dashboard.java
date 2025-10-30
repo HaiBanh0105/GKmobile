@@ -1,5 +1,6 @@
 package com.example.gk;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -13,6 +14,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.gk.Database.AppDatabase;
+import com.example.gk.Database.CurrencyDAO;
 import com.example.gk.viewmodel.DashboardViewModel;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
@@ -20,8 +23,11 @@ import com.github.mikephil.charting.components.Legend;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.NumberFormat;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.Executors;
 
 public class Dashboard extends BaseActivity {
 
@@ -39,6 +45,7 @@ public class Dashboard extends BaseActivity {
         setContentView(R.layout.dashboard);
 
         setupToolbar(R.id.toolbarDashboard);
+        initDefaultCurrenciesIfNeeded(this);
         initUi();
 
         viewModel = new DashboardViewModel();
@@ -151,4 +158,27 @@ public class Dashboard extends BaseActivity {
         NumberFormat formatter = NumberFormat.getInstance(new Locale("vi", "VN"));
         return formatter.format(value) + " VND";
     }
+
+    private void initDefaultCurrenciesIfNeeded(Context context) {
+        Executors.newSingleThreadExecutor().execute(() -> {
+            CurrencyDAO dao = AppDatabase.getInstance(context).currencyDAO();
+            List<CurrencyInfo> existing = dao.getAllCurrencies();
+
+            if (existing == null || existing.isEmpty()) {
+                List<CurrencyInfo> defaultCurrencies = Arrays.asList(
+                        new CurrencyInfo("USD", "Đô la Mỹ"),
+                        new CurrencyInfo("EUR", "Euro"),
+                        new CurrencyInfo("JPY", "Yên Nhật"),
+                        new CurrencyInfo("GBP", "Bảng Anh"),
+                        new CurrencyInfo("AUD", "Đô la Úc"),
+                        new CurrencyInfo("VND", "Đồng Việt Nam")
+                );
+
+                for (CurrencyInfo currency : defaultCurrencies) {
+                    dao.insert(currency);
+                }
+            }
+        });
+    }
+
 }

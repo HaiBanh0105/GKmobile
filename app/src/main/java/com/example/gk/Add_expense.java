@@ -57,12 +57,12 @@ public class Add_expense extends BaseActivity {
 
     private void setupCurrencySpinner() {
         Executors.newSingleThreadExecutor().execute(() -> {
-            List<String> currencyList = AppDatabase.getInstance(getApplicationContext())
-                    .exchangeDAO()
-                    .getAllCurrencyCodes();
+            List<CurrencyInfo> currencyList = AppDatabase.getInstance(getApplicationContext())
+                    .currencyDAO()
+                    .getAllCurrencies();
 
             runOnUiThread(() -> {
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                ArrayAdapter<CurrencyInfo> adapter = new ArrayAdapter<>(this,
                         android.R.layout.simple_spinner_item, currencyList);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 binding.currency.setAdapter(adapter);
@@ -70,8 +70,8 @@ public class Add_expense extends BaseActivity {
                 binding.currency.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        String selected = parent.getItemAtPosition(position).toString();
-                        viewModel.setCurrency(selected);
+                        CurrencyInfo selected = (CurrencyInfo) parent.getItemAtPosition(position);
+                        viewModel.setCurrency(selected.code); // chỉ lấy mã tiền tệ để xử lý
                     }
 
                     @Override
@@ -80,6 +80,7 @@ public class Add_expense extends BaseActivity {
             });
         });
     }
+
 
     private void setupRadioGroup() {
         binding.radioGroupType.setOnCheckedChangeListener((group, checkedId) -> {
