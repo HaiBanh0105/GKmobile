@@ -6,7 +6,6 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.pdf.PdfDocument;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,6 +16,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.gk.Database.AppDatabase;
+import com.example.gk.Database.ExchangeDAO;
+import com.example.gk.ExchangeRate;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -25,19 +26,17 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
-import java.util.concurrent.Executors;
 
 public class Export_report extends AppCompatActivity {
 
-    // UI components
     private TextView tvMonthYear, tvTotalIncome, tvTotalExpense, tvDifference, btnCancel;
     private Button btnExportPdf;
     private RecyclerView rcv;
 
-    // Data
     private ArrayList<Expense> receivedList;
     private int month;
     private String year;
+    private String incomeStr, expenseStr, differenceStr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,15 +64,15 @@ public class Export_report extends AppCompatActivity {
     private void loadIntentData() {
         month = getIntent().getIntExtra("month", 0);
         year = getIntent().getStringExtra("year");
-        String income = getIntent().getStringExtra("totalIncome");
-        String expense = getIntent().getStringExtra("totalExpense");
-        String difference = getIntent().getStringExtra("Difference");
+        incomeStr = getIntent().getStringExtra("totalIncome");
+        expenseStr = getIntent().getStringExtra("totalExpense");
+        differenceStr = getIntent().getStringExtra("Difference");
         receivedList = (ArrayList<Expense>) getIntent().getSerializableExtra("ListExpense");
 
         tvMonthYear.setTag("Tháng " + month + " / " + year);
-        tvTotalIncome.setTag(income);
-        tvTotalExpense.setTag(expense);
-        tvDifference.setTag(difference);
+        tvTotalIncome.setTag(incomeStr);
+        tvTotalExpense.setTag(expenseStr);
+        tvDifference.setTag(differenceStr);
     }
 
     private void setupRecyclerView() {
@@ -85,24 +84,19 @@ public class Export_report extends AppCompatActivity {
 
     private void displayReportInfo() {
         tvMonthYear.setText((String) tvMonthYear.getTag());
-        tvTotalIncome.setText("Tổng thu: " + tvTotalIncome.getTag() + " VND");
-        tvTotalExpense.setText("Tổng chi: " + tvTotalExpense.getTag() + " VND");
-        tvDifference.setText("Chênh lệch: " + tvDifference.getTag() + " VND");
+        tvTotalIncome.setText("Tổng thu: " + incomeStr + " " + AppConstants.currentCurrency);
+        tvTotalExpense.setText("Tổng chi: " + expenseStr + " " + AppConstants.currentCurrency);
+        tvDifference.setText("Chênh lệch: " + differenceStr + " " + AppConstants.currentCurrency);
     }
 
     private void setupListeners() {
         btnCancel.setOnClickListener(v -> finish());
         btnExportPdf.setOnClickListener(v -> exportPdf());
     }
-
     private void exportPdf() {
         String title = tvMonthYear.getText().toString();
-        String income = (String) tvTotalIncome.getTag();
-        String expense = (String) tvTotalExpense.getTag();
-        String difference = (String) tvDifference.getTag();
-
-        Date date = new Date();
-        String currentTime = "Ngày tạo: " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(date);
+        String currentTime = "Ngày tạo: " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
+        double rate = getRateFromVND(AppConstants.currentCurrency);
 
         PdfDocument pdfDocument = new PdfDocument();
         int pageWidth = 595, pageHeight = 842, margin = 40, rowHeight = 25, startY = 80;
@@ -139,7 +133,7 @@ public class Export_report extends AppCompatActivity {
 
         // Column titles
         int col1 = margin, col2 = col1 + 150, col3 = col2 + 100, col4 = col3 + 80;
-        canvas.drawText("Tên", col1 + 5, y, contentPaint);
+        canvas.drawText("Mục", col1 + 5, y, contentPaint);
         canvas.drawText("Số tiền", col2 + 5, y, contentPaint);
         canvas.drawText("Loại", col3 + 5, y, contentPaint);
         canvas.drawText("Ngày", col4 + 5, y, contentPaint);
@@ -162,7 +156,9 @@ public class Export_report extends AppCompatActivity {
             canvas.drawRect(col4, y, pageWidth - margin, y + rowHeight, borderPaint);
 
             canvas.drawText(e.title, col1 + 5, y + 17, contentPaint);
-            canvas.drawText(e.amount + " " + e.currency, col2 + 5, y + 17, contentPaint);
+            double convertedAmount = e.amount / rate;
+            String formattedAmount = String.format("%,.0f %s", convertedAmount, AppConstants.currentCurrency);
+            canvas.drawText(formattedAmount, col2 + 5, y + 17, contentPaint);
             canvas.drawText(e.isIncome ? "Thu" : "Chi", col3 + 5, y + 17, contentPaint);
             canvas.drawText(formatDate(e.timestamp), col4 + 5, y + 17, contentPaint);
 
@@ -172,9 +168,9 @@ public class Export_report extends AppCompatActivity {
         // Summary
         y += 20;
         canvas.drawLine(margin, y, pageWidth - margin, y, linePaint); y += 20;
-        canvas.drawText("Tổng thu: " + income + " VND", margin, y, contentPaint); y += 20;
-        canvas.drawText("Tổng chi: " + expense + " VND", margin, y, contentPaint); y += 20;
-        canvas.drawText("Chênh lệch: " + difference + " VND", margin, y, contentPaint); y += 30;
+        canvas.drawText("Tổng thu: " + incomeStr + " " + AppConstants.currentCurrency, margin, y, contentPaint); y += 20;
+        canvas.drawText("Tổng chi: " + expenseStr + " " + AppConstants.currentCurrency, margin, y, contentPaint); y += 20;
+        canvas.drawText("Chênh lệch: " + differenceStr + " " + AppConstants.currentCurrency, margin, y, contentPaint); y += 30;
 
         contentPaint.setTextAlign(Paint.Align.RIGHT);
         canvas.drawText(currentTime, pageWidth - margin, y, contentPaint);
@@ -186,20 +182,6 @@ public class Export_report extends AppCompatActivity {
         try {
             pdfDocument.writeTo(new FileOutputStream(file));
             Toast.makeText(this, "Đã lưu PDF thành công!", Toast.LENGTH_LONG).show();
-
-            // Save report to database
-            MonthlyReport report = new MonthlyReport();
-            report.setMonth(month);
-            report.setYear(Integer.parseInt(year));
-            report.setTotalIncome(Double.parseDouble(income));
-            report.setTotalExpense(Double.parseDouble(expense));
-            report.setGeneratedAt(System.currentTimeMillis());
-
-            Executors.newSingleThreadExecutor().execute(() -> {
-                AppDatabase db = AppDatabase.getInstance(this);
-                db.reportDAO().insertExpense(report);
-            });
-
             pdfDocument.close();
             finish();
         } catch (IOException e) {
@@ -208,7 +190,15 @@ public class Export_report extends AppCompatActivity {
         }
     }
 
-    private String formatDate(long timestamp) {
+
+
+        private String formatDate(long timestamp) {
         return new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date(timestamp));
     }
+
+    private double getRateFromVND(String targetCurrency) {
+        ExchangeRate rate = AppDatabase.getInstance(this).exchangeDAO().getRate(targetCurrency,"VND");
+        return (rate != null && rate.rate > 0) ? rate.rate : 1.0;
+    }
+
 }

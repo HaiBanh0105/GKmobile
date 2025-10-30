@@ -14,5 +14,6 @@
         android:titleTextColor="@android:color/white"
         app:menu="@menu/menu_dashboard"
         app:popupTheme="@style/ThemeOverlay.Material3.Light" />
+
 </com.google.android.material.appbar.AppBarLayout>
 

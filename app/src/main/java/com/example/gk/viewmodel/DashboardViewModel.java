@@ -1,6 +1,8 @@
 package com.example.gk.viewmodel;
 
 import android.content.Context;
+
+import com.example.gk.AppConstants;
 import com.example.gk.Database.AppDatabase;
 import com.example.gk.Database.ExchangeDAO;
 import com.example.gk.Database.ExpenseDAO;
@@ -21,23 +23,27 @@ import java.util.Map;
 
 public class DashboardViewModel {
 
-    public double totalIncome = 0;
-    public double totalExpense = 0;
-    public double difference = 0;
+    public double convertedIncome = 0;
+    public double convertedExpense = 0;
+    public double convertedDifference = 0;
 
     public PieData pieData;
     public BarData barData;
 
     public void loadData(Context context, String yearStr, int monthIndex) {
         ExpenseDAO expenseDAO = AppDatabase.getInstance(context).expenseDAO();
+        ExchangeDAO exchangeDAO = AppDatabase.getInstance(context).exchangeDAO();
+        ExchangeRate rate = exchangeDAO.getRate(AppConstants.currentCurrency,"VND");
+        double rateFromVND = (rate != null && rate.rate > 0) ? rate.rate : 1.0;
+
 
         List<Expense> filteredList = (monthIndex == 0)
                 ? expenseDAO.getExpensesByYearOnly(yearStr)
                 : expenseDAO.getExpensesByYearAndMonth(yearStr, String.format("%02d", monthIndex));
 
-        totalIncome = 0;
-        totalExpense = 0;
-        difference = 0;
+        double totalIncome = 0;
+        double totalExpense = 0;
+        double difference = 0;
 
         Map<String, Double> categoryTotals = new HashMap<>();
 
@@ -54,12 +60,16 @@ public class DashboardViewModel {
             }
         }
 
-        difference = totalIncome - totalExpense;
+        convertedIncome = totalIncome / rateFromVND;
+        convertedExpense = totalExpense / rateFromVND;
+        convertedDifference = convertedIncome - convertedExpense;
+
 
         // Pie chart
         List<PieEntry> pieEntries = new ArrayList<>();
         for (Map.Entry<String, Double> entry : categoryTotals.entrySet()) {
-            pieEntries.add(new PieEntry(entry.getValue().floatValue(), entry.getKey()));
+            float convertedAmount = (float) (entry.getValue() * rateFromVND);
+            pieEntries.add(new PieEntry(convertedAmount, entry.getKey()));
         }
 
         PieDataSet pieDataSet = new PieDataSet(pieEntries, "");
@@ -69,8 +79,8 @@ public class DashboardViewModel {
         pieData = new PieData(pieDataSet);
 
         // Bar chart
-        List<BarEntry> incomeEntries = List.of(new BarEntry(0, (float) totalIncome));
-        List<BarEntry> expenseEntries = List.of(new BarEntry(1, (float) totalExpense));
+        List<BarEntry> incomeEntries = List.of(new BarEntry(0, (float) convertedIncome));
+        List<BarEntry> expenseEntries = List.of(new BarEntry(1, (float) convertedExpense));
 
         BarDataSet incomeSet = new BarDataSet(incomeEntries, "Thu nhập");
         incomeSet.setColor(android.graphics.Color.parseColor("#4CAF50"));

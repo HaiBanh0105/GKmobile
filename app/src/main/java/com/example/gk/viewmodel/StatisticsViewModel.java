@@ -2,6 +2,7 @@ package com.example.gk.viewmodel;
 
 import android.content.Context;
 
+import com.example.gk.AppConstants;
 import com.example.gk.Database.AppDatabase;
 import com.example.gk.Database.ExchangeDAO;
 import com.example.gk.Database.ExpenseDAO;
@@ -59,16 +60,20 @@ public class StatisticsViewModel {
             }
         }
 
-        calculateSummary();
+        calculateSummary(context);
     }
 
-    private void calculateSummary() {
+    private void calculateSummary(Context context) {
+        ExchangeDAO exchangeDAO = AppDatabase.getInstance(context).exchangeDAO();
+        ExchangeRate rate = exchangeDAO.getRate(AppConstants.currentCurrency, "VND");
+
+        double rateFromVND = (rate != null && rate.rate > 0) ? 1.0 / rate.rate : 1.0;
+
         totalIncome = 0;
         totalExpense = 0;
-        difference = 0;
 
         for (Expense e : filteredExpenses) {
-            double amountVND = e.amount; // đã là VND
+            double amountVND = e.amount;
 
             if (e.isIncome) {
                 totalIncome += amountVND;
@@ -77,20 +82,25 @@ public class StatisticsViewModel {
             }
         }
 
+        // Quy đổi sang đơn vị tiền đã chọn
+        totalIncome *= rateFromVND;
+        totalExpense *= rateFromVND;
         difference = totalIncome - totalExpense;
     }
 
+
     public String getFormattedIncome() {
-        return String.format("%,.0f VND", totalIncome);
+        return String.format("%,.0f %s", totalIncome, AppConstants.currentCurrency);
     }
 
     public String getFormattedExpense() {
-        return String.format("%,.0f VND", totalExpense);
+        return String.format("%,.0f %s", totalExpense, AppConstants.currentCurrency);
     }
 
     public String getFormattedDifference() {
-        return String.format("%,.0f VND", difference);
+        return String.format("%,.0f %s", difference, AppConstants.currentCurrency);
     }
+
 
 
 }

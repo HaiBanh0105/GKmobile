@@ -130,7 +130,7 @@ public class Statistics extends BaseActivity {
         });
     }
 
-    private void filterAndDisplay() {
+    public void filterAndDisplay() {
         int monthPosition = spinnerMonth.getSelectedItemPosition();
         String keyword = edtSearch.getText().toString();
         String yearText = edtYear.getText().toString();

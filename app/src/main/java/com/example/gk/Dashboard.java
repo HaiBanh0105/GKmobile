@@ -58,7 +58,7 @@ public class Dashboard extends BaseActivity {
         setupYearWatcher();
         setupButtons();
 
-        loadSummaryInVND(); // initial load
+        loadSummary(); // initial load
     }
 
     private void initUi() {
@@ -102,7 +102,7 @@ public class Dashboard extends BaseActivity {
 
         spinnerMonth.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                loadSummaryInVND();
+                loadSummary();
             }
             @Override public void onNothingSelected(AdapterView<?> parent) {}
         });
@@ -110,7 +110,7 @@ public class Dashboard extends BaseActivity {
 
     private void setupYearWatcher() {
         edtYear.addTextChangedListener(new TextWatcher() {
-            @Override public void afterTextChanged(Editable s) { loadSummaryInVND(); }
+            @Override public void afterTextChanged(Editable s) { loadSummary(); }
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
         });
@@ -127,19 +127,17 @@ public class Dashboard extends BaseActivity {
         });
     }
 
-    private void loadSummaryInVND() {
+    public void loadSummary() {
         String yearStr = edtYear.getText().toString().trim();
         int monthIndex = spinnerMonth.getSelectedItemPosition();
         if (yearStr.isEmpty()) return;
 
         viewModel.loadData(this, yearStr, monthIndex);
 
-        // Hiển thị số liệu
-        tvTotalIncome.setText("Thu: " + formatVND(viewModel.totalIncome));
-        tvTotalExpense.setText("Chi: " + formatVND(viewModel.totalExpense));
-        tvDifference.setText("Còn lại: " + formatVND(viewModel.difference));
+        tvTotalIncome.setText("Thu: " + formatCurrency(viewModel.convertedIncome));
+        tvTotalExpense.setText("Chi: " + formatCurrency(viewModel.convertedExpense));
+        tvDifference.setText("Còn lại: " + formatCurrency(viewModel.convertedDifference));
 
-        // Hiển thị biểu đồ
         pieChart.setData(viewModel.pieData);
         pieChart.setUsePercentValues(true);
         pieChart.setCenterText("Tỉ lệ chi tiêu");
@@ -154,10 +152,12 @@ public class Dashboard extends BaseActivity {
         barChart.invalidate();
     }
 
-    private String formatVND(double value) {
+
+    private String formatCurrency(double value) {
         NumberFormat formatter = NumberFormat.getInstance(new Locale("vi", "VN"));
-        return formatter.format(value) + " VND";
+        return formatter.format(value) + " " + AppConstants.currentCurrency;
     }
+
 
     private void initDefaultCurrenciesIfNeeded(Context context) {
         Executors.newSingleThreadExecutor().execute(() -> {

@@ -38,7 +38,24 @@ public class Add_expense extends BaseActivity {
     }
 
     private void setupCategorySpinner() {
-        List<String> categories = Arrays.asList("Ăn uống", "Giải trí", "Lương", "Hóa đơn");
+        List<String> categories = Arrays.asList(
+                "Lương",
+                "Ăn uống",
+                "Giải trí",
+                "Hóa đơn",
+                "Di chuyển",
+                "Mua sắm",
+                "Sức khỏe",
+                "Giáo dục",
+                "Du lịch",
+                "Gia đình",
+                "Tiết kiệm",
+                "Đầu tư",
+                "Quà tặng",
+                "Thuế",
+                "Vay nợ",
+                "Khác"
+        );
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 this, android.R.layout.simple_spinner_dropdown_item, categories);
         binding.category.setAdapter(adapter);

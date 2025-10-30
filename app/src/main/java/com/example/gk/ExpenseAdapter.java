@@ -8,6 +8,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.gk.Database.AppDatabase;
+import com.example.gk.Database.ExchangeDAO;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -37,11 +40,11 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
         holder.tvTitle.setText(expense.getTitle());
 
         // Format số tiền: có dấu phẩy và đơn vị VND
-        String formattedAmount = String.format("%,.0f VND", expense.getAmount());
+        String formattedAmount = formatCurrency(holder.itemView, expense.getAmount());
+
         holder.tvAmount.setText(formattedAmount);
 
-        // Vì đã quy đổi sang VND, không cần hiển thị đơn vị gốc nữa
-        holder.tvCurrency.setVisibility(View.GONE); // hoặc setText("")
+        holder.tvCurrency.setVisibility(View.GONE);
 
         // Format danh mục: viết hoa chữ cái đầu
         String category = expense.getCategory();
@@ -91,6 +94,16 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
             tvDate = itemView.findViewById(R.id.tvDate);
         }
     }
+
+    private String formatCurrency(View view, double amountVND) {
+        ExchangeDAO exchangeDAO = AppDatabase.getInstance(view.getContext()).exchangeDAO();
+        ExchangeRate rate = exchangeDAO.getRate(AppConstants.currentCurrency, "VND");
+        double rateFromVND = (rate != null && rate.rate > 0) ? 1.0 / rate.rate : 1.0;
+
+        double convertedAmount = amountVND * rateFromVND;
+        return String.format("%,.0f %s", convertedAmount, AppConstants.currentCurrency);
+    }
+
 
 
 
