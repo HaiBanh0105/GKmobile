@@ -13,19 +13,12 @@ import java.util.List;
 
 @Dao
 public interface ExchangeDAO {
+
+    @Query("SELECT * FROM exchange_rates WHERE baseCurrency = :base AND targetCurrency = :target LIMIT 1")
+    ExchangeRate getRate(String base, String target);
+
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(ExchangeRate rate);
-
-    @Delete
-    void delete(ExchangeRate rate);
-
-    @Query("SELECT * FROM exchange_rates")
-    List<ExchangeRate> getListExchangeRates();
-
-    @Query("SELECT currencyCode FROM exchange_rates")
-    List<String> getAllCurrencyCodes();
-
-    @Query("SELECT * FROM exchange_rates WHERE currencyCode = :code LIMIT 1")
-    ExchangeRate getRateByCurrency(String code);
-
 }
+

@@ -2,43 +2,64 @@ package com.example.gk;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import com.example.gk.Database.ExpenseDAO;
 
 @Entity(tableName = "exchange_rates")
 public class ExchangeRate {
-    @PrimaryKey
-    @NonNull
-    public String currencyCode;    // Ví dụ: "USD", "EUR"
+    @PrimaryKey(autoGenerate = true)
+    public int id;
 
-    public double rateToVND;       // Tỷ giá quy đổi sang VND
-    public long lastUpdated;       // Thời điểm cập nhật
+    public String baseCurrency;   // ví dụ: "USD"
+    public String targetCurrency; // ví dụ: "VND"
+    public double rate;           // ví dụ: 26331.5
+    public long lastUpdated;
 
+
+    @Ignore
+    public ExchangeRate(String baseCurrency, String targetCurrency, double rate, long lastUpdated) {
+        this.baseCurrency = baseCurrency;
+        this.targetCurrency = targetCurrency;
+        this.rate = rate;
+        this.lastUpdated = lastUpdated;
+    }
 
     public ExchangeRate(){
 
     }
 
-    public ExchangeRate(@NonNull String currencyCode, double rateToVND, long lastUpdated) {
-        this.currencyCode = currencyCode;
-        this.rateToVND = rateToVND;
-        this.lastUpdated = lastUpdated;
-    }
-    public String getCurrencyCode() {
-        return currencyCode;
+    public int getId() {
+        return id;
     }
 
-    public void setCurrencyCode(String currencyCode) {
-        this.currencyCode = currencyCode;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public double getRateToVND() {
-        return rateToVND;
+    public String getBaseCurrency() {
+        return baseCurrency;
     }
 
-    public void setRateToVND(double rateToVND) {
-        this.rateToVND = rateToVND;
+    public void setBaseCurrency(String baseCurrency) {
+        this.baseCurrency = baseCurrency;
+    }
+
+    public String getTargetCurrency() {
+        return targetCurrency;
+    }
+
+    public void setTargetCurrency(String targetCurrency) {
+        this.targetCurrency = targetCurrency;
+    }
+
+    public double getRate() {
+        return rate;
+    }
+
+    public void setRate(double rate) {
+        this.rate = rate;
     }
 
     public long getLastUpdated() {
@@ -49,3 +70,4 @@ public class ExchangeRate {
         this.lastUpdated = lastUpdated;
     }
 }
+

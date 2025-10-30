@@ -59,20 +59,16 @@ public class StatisticsViewModel {
             }
         }
 
-        calculateSummary(context);
+        calculateSummary();
     }
 
-    private void calculateSummary(Context context) {
+    private void calculateSummary() {
         totalIncome = 0;
         totalExpense = 0;
         difference = 0;
 
-        ExchangeDAO exchangeDAO = AppDatabase.getInstance(context).exchangeDAO();
-
         for (Expense e : filteredExpenses) {
-            ExchangeRate rate = exchangeDAO.getRateByCurrency(e.currency);
-            double rateToVND = (rate != null) ? rate.rateToVND : 1.0;
-            double amountVND = e.amount * rateToVND;
+            double amountVND = e.amount; // đã là VND
 
             if (e.isIncome) {
                 totalIncome += amountVND;
@@ -83,4 +79,18 @@ public class StatisticsViewModel {
 
         difference = totalIncome - totalExpense;
     }
+
+    public String getFormattedIncome() {
+        return String.format("%,.0f VND", totalIncome);
+    }
+
+    public String getFormattedExpense() {
+        return String.format("%,.0f VND", totalExpense);
+    }
+
+    public String getFormattedDifference() {
+        return String.format("%,.0f VND", difference);
+    }
+
+
 }

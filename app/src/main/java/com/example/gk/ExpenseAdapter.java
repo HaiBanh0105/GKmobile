@@ -27,15 +27,32 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
         return new ExpenseViewHolder(view);
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull ExpenseViewHolder holder, int position) {
         Expense expense = mlistExpense.get(position);
         if (expense == null) return;
 
+        // Tiêu đề
         holder.tvTitle.setText(expense.getTitle());
-        holder.tvAmount.setText(String.valueOf(expense.getAmount()));
-        holder.tvCurrency.setText(expense.getCurrency());
-        holder.tvCategory.setText(expense.getCategory());
+
+        // Format số tiền: có dấu phẩy và đơn vị VND
+        String formattedAmount = String.format("%,.0f VND", expense.getAmount());
+        holder.tvAmount.setText(formattedAmount);
+
+        // Vì đã quy đổi sang VND, không cần hiển thị đơn vị gốc nữa
+        holder.tvCurrency.setVisibility(View.GONE); // hoặc setText("")
+
+        // Format danh mục: viết hoa chữ cái đầu
+        String category = expense.getCategory();
+        if (category != null && !category.isEmpty()) {
+            category = category.substring(0, 1).toUpperCase() + category.substring(1).toLowerCase();
+        } else {
+            category = "Khác";
+        }
+        holder.tvCategory.setText(category);
+
+        // Loại giao dịch: Thu / Chi
         holder.tvType.setText(expense.isIncome() ? "Thu" : "Chi");
 
         // Định dạng thời gian
@@ -43,6 +60,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
         String formattedDate = sdf.format(new Date(expense.getTimestamp()));
         holder.tvDate.setText(formattedDate);
     }
+
 
     @Override
     public int getItemCount() {

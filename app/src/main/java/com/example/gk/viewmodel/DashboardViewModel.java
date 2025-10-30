@@ -30,7 +30,6 @@ public class DashboardViewModel {
 
     public void loadData(Context context, String yearStr, int monthIndex) {
         ExpenseDAO expenseDAO = AppDatabase.getInstance(context).expenseDAO();
-        ExchangeDAO exchangeDAO = AppDatabase.getInstance(context).exchangeDAO();
 
         List<Expense> filteredList = (monthIndex == 0)
                 ? expenseDAO.getExpensesByYearOnly(yearStr)
@@ -43,15 +42,14 @@ public class DashboardViewModel {
         Map<String, Double> categoryTotals = new HashMap<>();
 
         for (Expense e : filteredList) {
-            ExchangeRate rate = exchangeDAO.getRateByCurrency(e.currency);
-            double rateToVND = (rate != null) ? rate.rateToVND : 1.0;
-            double amountVND = e.amount * rateToVND;
+            double amountVND = e.amount; // đã được quy đổi khi lưu
 
             if (e.isIncome) {
                 totalIncome += amountVND;
             } else {
                 totalExpense += amountVND;
-                String category = e.category != null ? e.category : "Khác";
+
+                String category = (e.category != null && !e.category.isEmpty()) ? e.category : "Khác";
                 categoryTotals.put(category, categoryTotals.getOrDefault(category, 0.0) + amountVND);
             }
         }
