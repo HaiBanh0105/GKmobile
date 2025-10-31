@@ -181,4 +181,10 @@ public class Dashboard extends BaseActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadSummary();
+    }
+
 }

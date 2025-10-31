@@ -1,5 +1,6 @@
 package com.example.gk;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -111,9 +112,16 @@ public class Add_expense extends BaseActivity {
             viewModel.setTimestamp(System.currentTimeMillis());
             viewModel.saveExpense(this);
             Toast.makeText(this, "Đã lưu giao dịch", Toast.LENGTH_SHORT).show();
+            finish();
         });
 
-        binding.btnCancel.setOnClickListener(v -> finish());
+        binding.btnCancel.setOnClickListener(v -> {
+            Intent intent = new Intent(this, Dashboard.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+            finish();
+        });
+
 
 //        binding.btnManageCategory.setOnClickListener(v -> {
 //            CategoryDialogFragment dialog = new CategoryDialogFragment();
