@@ -15,12 +15,14 @@ import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class DashboardViewModel {
@@ -81,33 +83,50 @@ public class DashboardViewModel {
                 // thêm màu nếu cần
         );
 
-        // Pie chart
+        pieData = generatePieData(categoryTotals, customColors);
+        barData = generateBarData((float) convertedIncome, (float) convertedExpense);
+    }
+
+    public PieData generatePieData(Map<String, Double> categoryTotals, List<Integer> customColors) {
         List<PieEntry> pieEntries = new ArrayList<>();
         double total = categoryTotals.values().stream().mapToDouble(Double::doubleValue).sum();
 
         for (Map.Entry<String, Double> entry : categoryTotals.entrySet()) {
             float percent = (float) ((entry.getValue() / total) * 100);
-            pieEntries.add(new PieEntry(percent, entry.getKey()));
+            String labelWithPercent = entry.getKey() + " (" + String.format(Locale.US, "%.1f", percent) + "%)";
+            pieEntries.add(new PieEntry(entry.getValue().floatValue(), labelWithPercent));
+
         }
 
         PieDataSet pieDataSet = new PieDataSet(pieEntries, "");
         pieDataSet.setColors(customColors);
         pieDataSet.setValueTextSize(14f);
-        pieDataSet.setValueTextColor(android.graphics.Color.WHITE);
-        pieData = new PieData(pieDataSet);
+        pieDataSet.setValueTextColor(Color.WHITE);
+        pieDataSet.setSliceSpace(2f);
 
-        // Bar chart
-        List<BarEntry> incomeEntries = List.of(new BarEntry(0, (float) convertedIncome));
-        List<BarEntry> expenseEntries = List.of(new BarEntry(1, (float) convertedExpense));
+
+        PieData pieData = new PieData(pieDataSet);
+        pieData.setValueTextSize(14f);
+        pieData.setValueTextColor(Color.WHITE);
+        pieData.setValueFormatter(new PercentFormatter());
+
+        return pieData;
+    }
+
+    public BarData generateBarData(float income, float expense) {
+        List<BarEntry> incomeEntries = List.of(new BarEntry(0, income));
+        List<BarEntry> expenseEntries = List.of(new BarEntry(1, expense));
 
         BarDataSet incomeSet = new BarDataSet(incomeEntries, "Thu nhập");
-        incomeSet.setColor(android.graphics.Color.parseColor("#4CAF50"));
+        incomeSet.setColor(Color.parseColor("#4CAF50"));
         incomeSet.setDrawValues(false);
 
         BarDataSet expenseSet = new BarDataSet(expenseEntries, "Chi tiêu");
-        expenseSet.setColor(android.graphics.Color.parseColor("#F44336"));
+        expenseSet.setColor(Color.parseColor("#F44336"));
         expenseSet.setDrawValues(false);
 
-        barData = new BarData(incomeSet, expenseSet);
+        return new BarData(incomeSet, expenseSet);
     }
+
+
 }

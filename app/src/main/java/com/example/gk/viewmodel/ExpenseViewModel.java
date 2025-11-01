@@ -172,10 +172,4 @@ public class ExpenseViewModel extends BaseObservable {
         return true;
     }
 
-
-
-
-
-
-
 }

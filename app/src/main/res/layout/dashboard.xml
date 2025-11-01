@@ -79,7 +79,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginBottom="20dp"
                 android:weightSum="2">
@@ -132,12 +132,28 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Biểu đồ cột thể hiện tổng thu chi theo tháng"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:gravity="center"/>
+
             <!-- Biểu đồ tròn -->
             <com.github.mikephil.charting.charts.PieChart
                 android:id="@+id/pieChart"
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
                 android:layout_marginEnd="8dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Biểu đồ tròn thể hiện tỉ lệ chi tiêu theo tháng"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:gravity="center"/>
 
 
         </LinearLayout>

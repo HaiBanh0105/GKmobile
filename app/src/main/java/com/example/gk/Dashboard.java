@@ -19,7 +19,11 @@ import com.example.gk.Database.CurrencyDAO;
 import com.example.gk.viewmodel.DashboardViewModel;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.NumberFormat;
@@ -134,23 +138,47 @@ public class Dashboard extends BaseActivity {
 
         viewModel.loadData(this, yearStr, monthIndex);
 
+        updateSummaryText();
+        setupPieChart(viewModel.pieData);
+        setupBarChart(viewModel.barData, (float) viewModel.convertedIncome, (float) viewModel.convertedExpense);
+    }
+
+    private void updateSummaryText() {
         tvTotalIncome.setText("Thu: " + formatCurrency(viewModel.convertedIncome));
         tvTotalExpense.setText("Chi: " + formatCurrency(viewModel.convertedExpense));
         tvDifference.setText("Còn lại: " + formatCurrency(viewModel.convertedDifference));
+    }
 
-        pieChart.setData(viewModel.pieData);
-        pieChart.setUsePercentValues(true);
+    private void setupPieChart(PieData data) {
+        pieChart.setUsePercentValues(false);
+        data.setDrawValues(false);
+
+        pieChart.setData(data);
         pieChart.setCenterText("Tỉ lệ chi tiêu");
         pieChart.setCenterTextSize(16f);
         pieChart.setDrawEntryLabels(false);
         pieChart.invalidate();
-
-        barChart.setData(viewModel.barData);
-        barChart.getXAxis().setEnabled(false);
-        barChart.getAxisLeft().setEnabled(false);
-        barChart.getAxisRight().setEnabled(false);
-        barChart.invalidate();
+        pieChart.animateY(1000);
     }
+    private void setupBarChart(BarData data, float income, float expense) {
+        barChart.setData(data);
+
+        barChart.getXAxis().setEnabled(false);
+        barChart.getAxisRight().setEnabled(false);
+        barChart.getAxisLeft().setEnabled(false);
+
+        float maxValue = Math.max(income, expense);
+        barChart.getAxisLeft().setAxisMaximum(maxValue * 1.1f);
+        barChart.getAxisLeft().setAxisMinimum(0f);
+        barChart.getAxisLeft().setDrawGridLines(false);
+        barChart.getAxisLeft().setDrawLabels(true);
+
+        barChart.invalidate();
+        barChart.animateY(1000);
+
+    }
+
+
 
 
     private String formatCurrency(double value) {
