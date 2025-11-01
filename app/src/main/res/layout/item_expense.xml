@@ -4,14 +4,15 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp"
-    android:weightSum="6">
+    android:padding="5dp"
+    android:background="@drawable/cell_border"
+    >
 
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:text="Title"
         android:padding="4dp"
         android:textSize="12sp" />
@@ -20,7 +21,7 @@
         android:id="@+id/tvAmount"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:text="Amount"
         android:padding="4dp"
         android:textSize="12sp" />

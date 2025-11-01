@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include layout="@layout/include_toolbar" />
+    <include layout="@layout/include_toolbar_top" />
 
     <!-- Nội dung cuộn được -->
     <androidx.core.widget.NestedScrollView
@@ -25,7 +25,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="8dp"
+
+                android:background="#FFFFFF"
                 android:gravity="center_vertical"
                 android:weightSum="2">
 
@@ -55,6 +56,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginBottom="16dp"
+                android:background="#FFFFFF"
                 android:gravity="center_vertical"
                 android:weightSum="2">
 
@@ -77,10 +79,20 @@
                     android:padding="8dp" />
             </LinearLayout>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Biểu đồ cột thể hiện tổng thu chi theo tháng"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginBottom="10dp"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:background="#FFFFFF"
                 android:layout_marginBottom="20dp"
                 android:weightSum="2">
 
@@ -132,20 +144,7 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Biểu đồ cột thể hiện tổng thu chi theo tháng"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:gravity="center"/>
-
             <!-- Biểu đồ tròn -->
-            <com.github.mikephil.charting.charts.PieChart
-                android:id="@+id/pieChart"
-                android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:layout_marginEnd="8dp" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -153,42 +152,20 @@
                 android:text="Biểu đồ tròn thể hiện tỉ lệ chi tiêu theo tháng"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:gravity="center"/>
+                android:gravity="center"
+                android:layout_marginBottom="10dp"/>
+
+            <com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/pieChart"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_marginEnd="8dp"
+                android:background="#FFFFFF"/>
 
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-
-    <LinearLayout
-        android:id="@+id/bottomToolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="#FFFFFF"
-        android:padding="12dp"
-        android:layout_gravity="bottom"
-        android:elevation="4dp"
-        android:gravity="center">
-
-        <!-- Nút thêm giao dịch -->
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/btnAddExpense"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="24dp"
-            android:contentDescription="Thêm giao dịch"
-            android:src="@android:drawable/ic_input_add" />
-
-        <!-- Nút xuất PDF -->
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/btnExportPdf"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="Xuất báo cáo PDF"
-            android:src="@android:drawable/ic_menu_save"
-            android:layout_marginStart="24dp" />
-    </LinearLayout>
-
+    <include layout="@layout/include_toolbar_bottom" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

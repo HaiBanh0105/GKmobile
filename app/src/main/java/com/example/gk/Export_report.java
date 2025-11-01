@@ -99,9 +99,10 @@ public class Export_report extends AppCompatActivity {
         double rate = getRateFromVND(AppConstants.currentCurrency);
 
         PdfDocument pdfDocument = new PdfDocument();
-        int pageWidth = 595, pageHeight = 842, margin = 40, rowHeight = 25, startY = 80;
+        int pageWidth = 595, pageHeight = 842, margin = 40, rowHeight = 30, startY = 80;
         int y = startY;
 
+        // Paints
         Paint titlePaint = new Paint();
         titlePaint.setTextSize(20f);
         titlePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
@@ -131,12 +132,24 @@ public class Export_report extends AppCompatActivity {
         canvas.drawText(title, centerX, y, contentPaint); y += 30;
         canvas.drawLine(margin, y, pageWidth - margin, y, linePaint); y += 20;
 
+        // Column setup
+        int tableWidth = pageWidth - 2 * margin;
+        int col1Width = (int)(tableWidth * 0.25); // Mục
+        int col2Width = (int)(tableWidth * 0.25); // Số tiền
+        int col3Width = (int)(tableWidth * 0.15); // Loại
+        int col4Width = (int)(tableWidth * 0.30); // Ngày
+
+        int col1 = margin;
+        int col2 = col1 + col1Width;
+        int col3 = col2 + col2Width;
+        int col4 = col3 + col3Width;
+
         // Column titles
-        int col1 = margin, col2 = col1 + 150, col3 = col2 + 100, col4 = col3 + 80;
-        canvas.drawText("Mục", col1 + 5, y, contentPaint);
-        canvas.drawText("Số tiền", col2 + 5, y, contentPaint);
-        canvas.drawText("Loại", col3 + 5, y, contentPaint);
-        canvas.drawText("Ngày", col4 + 5, y, contentPaint);
+        contentPaint.setTextAlign(Paint.Align.CENTER);
+        canvas.drawText("Mục", col1 + col1Width / 2, y, contentPaint);
+        canvas.drawText("Số tiền", col2 + col2Width / 2, y, contentPaint);
+        canvas.drawText("Loại", col3 + col3Width / 2, y, contentPaint);
+        canvas.drawText("Ngày", col4 + col4Width / 2, y, contentPaint);
         y += rowHeight;
         canvas.drawLine(margin, y, pageWidth - margin, y, linePaint); y += 5;
 
@@ -150,17 +163,21 @@ public class Export_report extends AppCompatActivity {
                 y = startY;
             }
 
+            // Draw cell borders
             canvas.drawRect(col1, y, col2, y + rowHeight, borderPaint);
             canvas.drawRect(col2, y, col3, y + rowHeight, borderPaint);
             canvas.drawRect(col3, y, col4, y + rowHeight, borderPaint);
             canvas.drawRect(col4, y, pageWidth - margin, y + rowHeight, borderPaint);
 
-            canvas.drawText(e.title, col1 + 5, y + 17, contentPaint);
+            // Draw cell content
+            contentPaint.setTextAlign(Paint.Align.LEFT);
+            canvas.drawText(e.title, col1 + 5, y + 20, contentPaint);
             double convertedAmount = e.amount / rate;
             String formattedAmount = String.format("%,.0f %s", convertedAmount, AppConstants.currentCurrency);
-            canvas.drawText(formattedAmount, col2 + 5, y + 17, contentPaint);
-            canvas.drawText(e.isIncome ? "Thu" : "Chi", col3 + 5, y + 17, contentPaint);
-            canvas.drawText(formatDate(e.timestamp), col4 + 5, y + 17, contentPaint);
+            contentPaint.setTextAlign(Paint.Align.CENTER);
+            canvas.drawText(formattedAmount, col2 + col2Width / 2, y + 20, contentPaint);
+            canvas.drawText(e.isIncome ? "Thu" : "Chi", col3 + col3Width / 2, y + 20, contentPaint);
+            canvas.drawText(formatDate(e.timestamp), col4 + col4Width / 2, y + 20, contentPaint);
 
             y += rowHeight;
         }
@@ -168,6 +185,8 @@ public class Export_report extends AppCompatActivity {
         // Summary
         y += 20;
         canvas.drawLine(margin, y, pageWidth - margin, y, linePaint); y += 20;
+
+        contentPaint.setTextAlign(Paint.Align.LEFT);
         canvas.drawText("Tổng thu: " + incomeStr + " " + AppConstants.currentCurrency, margin, y, contentPaint); y += 20;
         canvas.drawText("Tổng chi: " + expenseStr + " " + AppConstants.currentCurrency, margin, y, contentPaint); y += 20;
         canvas.drawText("Chênh lệch: " + differenceStr + " " + AppConstants.currentCurrency, margin, y, contentPaint); y += 30;
@@ -181,8 +200,18 @@ public class Export_report extends AppCompatActivity {
         File file = new File(getExternalFilesDir(null), "baocao_" + System.currentTimeMillis() + ".pdf");
         try {
             pdfDocument.writeTo(new FileOutputStream(file));
-            Toast.makeText(this, "Đã lưu PDF thành công!", Toast.LENGTH_LONG).show();
             pdfDocument.close();
+            Toast.makeText(this, "Đã xuất file PDF thành công!!", Toast.LENGTH_LONG).show();
+
+            // Insert into database
+            MonthlyReport report = new MonthlyReport();
+            report.setMonth(month);
+            report.setYear(Integer.parseInt(year));
+            report.setTotalIncome(Double.parseDouble(incomeStr));
+            report.setTotalExpense(Double.parseDouble(expenseStr));
+            report.setGeneratedAt(System.currentTimeMillis());
+
+            AppDatabase.getInstance(this).reportDAO().insertExpense(report);
             finish();
         } catch (IOException e) {
             e.printStackTrace();
@@ -192,7 +221,8 @@ public class Export_report extends AppCompatActivity {
 
 
 
-        private String formatDate(long timestamp) {
+
+    private String formatDate(long timestamp) {
         return new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date(timestamp));
     }
 

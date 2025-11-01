@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <!-- Toolbar dùng chung -->
-    <include layout="@layout/include_toolbar" />
+    <include layout="@layout/include_toolbar_top" />
 
     <!-- Nội dung chính -->
     <LinearLayout

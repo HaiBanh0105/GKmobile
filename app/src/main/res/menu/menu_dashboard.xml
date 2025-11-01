@@ -1,20 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!-- Nút dashboard -->
-    <item
-        android:id="@+id/menu_dashboard"
-        android:title="Dashboard"
-        android:icon="@drawable/dashboard"
-        app:showAsAction="always" />
-
-    <!-- Nút thống kê -->
-    <item
-        android:id="@+id/menu_statistics"
-        android:title="Chi tiết"
-        android:icon="@drawable/chart"
-        app:showAsAction="always" />
-
     <!-- Nút chọn tiền tệ -->
     <item
         android:id="@+id/menu_currency"

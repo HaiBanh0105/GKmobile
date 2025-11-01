@@ -40,7 +40,7 @@ public class Dashboard extends BaseActivity {
     private EditText edtYear;
     private PieChart pieChart;
     private BarChart barChart;
-    private FloatingActionButton AddExpense, Export;
+    private FloatingActionButton AddExpense, Export, Statistics;
     private DashboardViewModel viewModel;
 
     @Override
@@ -74,6 +74,7 @@ public class Dashboard extends BaseActivity {
         pieChart = findViewById(R.id.pieChart);
         barChart = findViewById(R.id.barChart);
         AddExpense = findViewById(R.id.btnAddExpense);
+        Statistics = findViewById(R.id.btnStatistics);
         Export = findViewById(R.id.btnExportPdf);
     }
 
@@ -128,6 +129,11 @@ public class Dashboard extends BaseActivity {
 
         Export.setOnClickListener(v -> {
             Toast.makeText(this, "Chức năng xuất PDF đang được phát triển", Toast.LENGTH_SHORT).show();
+        });
+
+        Statistics.setOnClickListener(v -> {
+            Intent intent = new Intent(Dashboard.this, Statistics.class);
+            startActivity(intent);
         });
     }
 
