@@ -155,8 +155,10 @@ public class Dashboard extends BaseActivity {
 
     private String formatCurrency(double value) {
         NumberFormat formatter = NumberFormat.getInstance(new Locale("vi", "VN"));
+        formatter.setMaximumFractionDigits(0);
         return formatter.format(value) + " " + AppConstants.currentCurrency;
     }
+
 
 
     private void initDefaultCurrenciesIfNeeded(Context context) {

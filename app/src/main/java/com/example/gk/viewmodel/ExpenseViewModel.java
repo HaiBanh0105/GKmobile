@@ -2,6 +2,7 @@ package com.example.gk.viewmodel;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
@@ -105,7 +106,7 @@ public class ExpenseViewModel extends BaseObservable {
             double originalAmount = expense.getAmount();
 
             ExchangeDAO dao = AppDatabase.getInstance(context).exchangeDAO();
-            ExchangeRate rate = dao.getRate(baseCurrency, targetCurrency);
+            ExchangeRate rate = dao.getLatestRate(baseCurrency, targetCurrency);
 
             boolean needUpdate = rate == null || System.currentTimeMillis() - rate.lastUpdated > 24 * 60 * 60 * 1000;
 
@@ -160,8 +161,17 @@ public class ExpenseViewModel extends BaseObservable {
 
             // Lưu giao dịch
             AppDatabase.getInstance(context).expenseDAO().insertExpense(expense);
+
         });
     }
+    public boolean isValid() {
+        if (expense.getTitle() == null || expense.getTitle().trim().isEmpty()) return false;
+        if (expense.getAmount() <= 0) return false;
+        if (expense.getCurrency() == null || expense.getCurrency().trim().isEmpty()) return false;
+        if (expense.getCategory() == null || expense.getCategory().trim().isEmpty()) return false;
+        return true;
+    }
+
 
 
 

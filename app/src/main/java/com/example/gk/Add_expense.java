@@ -7,6 +7,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+
 import com.example.gk.Database.AppDatabase;
 import com.example.gk.viewmodel.ExpenseViewModel;
 import com.example.gk.databinding.AddExpenseBinding;
@@ -109,24 +111,35 @@ public class Add_expense extends BaseActivity {
 
     private void setupButtons() {
         binding.btnAdd.setOnClickListener(v -> {
-            viewModel.setTimestamp(System.currentTimeMillis());
-            viewModel.saveExpense(this);
-            Toast.makeText(this, "Đã lưu giao dịch", Toast.LENGTH_SHORT).show();
-            finish();
+            if (!viewModel.isValid()) {
+                Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Executors.newSingleThreadExecutor().execute(() -> {
+                viewModel.setTimestamp(System.currentTimeMillis());
+                viewModel.saveExpense(this);
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "Đã lưu giao dịch", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(this, Dashboard.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(intent);
+                    finish();
+                });
+            });
         });
 
         binding.btnCancel.setOnClickListener(v -> {
-            Intent intent = new Intent(this, Dashboard.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(intent);
-            finish();
+            new AlertDialog.Builder(this)
+                    .setTitle("Xác nhận")
+                    .setMessage("Bạn có chắc muốn hủy?")
+                    .setPositiveButton("Có", (dialog, which) -> {
+                        Intent intent = new Intent(this, Dashboard.class);
+                        setResult(RESULT_CANCELED); // hoặc truyền thêm dữ liệu qua intent
+                        finish();
+                    })
+                    .setNegativeButton("Không", null)
+                    .show();
         });
-
-
-//        binding.btnManageCategory.setOnClickListener(v -> {
-//            CategoryDialogFragment dialog = new CategoryDialogFragment();
-//            dialog.show(getSupportFragmentManager(), "CategoryDialog");
-//        });
     }
 
     @Override

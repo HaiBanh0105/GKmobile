@@ -105,8 +105,4 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
     }
 
 
-
-
-
-
 }

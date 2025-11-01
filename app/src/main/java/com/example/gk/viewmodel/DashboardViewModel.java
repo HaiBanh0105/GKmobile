@@ -1,6 +1,7 @@
 package com.example.gk.viewmodel;
 
 import android.content.Context;
+import android.graphics.Color;
 
 import com.example.gk.AppConstants;
 import com.example.gk.Database.AppDatabase;
@@ -17,6 +18,7 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,15 +67,31 @@ public class DashboardViewModel {
         convertedDifference = convertedIncome - convertedExpense;
 
 
+        List<Integer> customColors = Arrays.asList(
+                Color.parseColor("#4CAF50"), // xanh lá
+                Color.parseColor("#FF9800"), // cam
+                Color.parseColor("#F44336"), // đỏ
+                Color.parseColor("#2196F3"), // xanh dương
+                Color.parseColor("#9C27B0"), // tím
+                Color.parseColor("#00BCD4"), // xanh ngọc
+                Color.parseColor("#795548"), // nâu
+                Color.parseColor("#607D8B"), // xám
+                Color.parseColor("#E91E63"), // hồng
+                Color.parseColor("#8BC34A")  // xanh lá nhạt
+                // thêm màu nếu cần
+        );
+
         // Pie chart
         List<PieEntry> pieEntries = new ArrayList<>();
+        double total = categoryTotals.values().stream().mapToDouble(Double::doubleValue).sum();
+
         for (Map.Entry<String, Double> entry : categoryTotals.entrySet()) {
-            float convertedAmount = (float) (entry.getValue() * rateFromVND);
-            pieEntries.add(new PieEntry(convertedAmount, entry.getKey()));
+            float percent = (float) ((entry.getValue() / total) * 100);
+            pieEntries.add(new PieEntry(percent, entry.getKey()));
         }
 
         PieDataSet pieDataSet = new PieDataSet(pieEntries, "");
-        pieDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+        pieDataSet.setColors(customColors);
         pieDataSet.setValueTextSize(14f);
         pieDataSet.setValueTextColor(android.graphics.Color.WHITE);
         pieData = new PieData(pieDataSet);
