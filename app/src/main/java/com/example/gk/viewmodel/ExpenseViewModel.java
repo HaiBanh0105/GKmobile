@@ -11,8 +11,10 @@ import androidx.databinding.Bindable;
 import com.example.gk.BR;
 import com.example.gk.Database.AppDatabase;
 import com.example.gk.Database.ExchangeDAO;
+import com.example.gk.Database.ExpenseDAO;
 import com.example.gk.ExchangeRate;
 import com.example.gk.Expense;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.json.JSONObject;
 
@@ -160,7 +162,24 @@ public class ExpenseViewModel extends BaseObservable {
             expense.setAmount(convertedAmount);
 
             // Lưu giao dịch
-            AppDatabase.getInstance(context).expenseDAO().insertExpense(expense);
+            // Lưu vào Room
+            ExpenseDAO expenseDAO = AppDatabase.getInstance(context).expenseDAO();
+            expenseDAO.insertExpense(expense);
+
+            // Lấy bản ghi mới nhất từ Room
+            Expense latestExpense = expenseDAO.getLatestExpense();
+
+            // Đồng bộ bản ghi đó lên Firestore
+            if (latestExpense != null) {
+                FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+                firestore.collection("expenses")
+                        .document(String.valueOf(latestExpense.getId())) // Dùng ID làm document ID
+                        .set(latestExpense)
+                        .addOnSuccessListener(aVoid -> Log.d("Firestore", "Đã đồng bộ Expense mới nhất: " + latestExpense.getId()))
+                        .addOnFailureListener(e -> Log.e("Firestore", "Lỗi khi đồng bộ Expense mới nhất", e));
+            }
+
+
 
         });
     }

@@ -16,6 +16,16 @@ public interface ExpenseDAO {
     @Query("select * from expenses")
     List<Expense> getListExpense();
 
+    @Query("SELECT * FROM expenses ORDER BY timestamp DESC LIMIT 1")
+    Expense getLatestExpense();
+
+    @Query("SELECT MAX(id) FROM expenses")
+    int getMaxExpenseId();
+
+    @Query("SELECT * FROM expenses WHERE id = :id")
+    Expense getExpenseById(int id);
+
+
     @Query("SELECT * FROM expenses WHERE strftime('%Y', datetime(timestamp / 1000, 'unixepoch')) = :year AND strftime('%m', datetime(timestamp / 1000, 'unixepoch')) = :monthStr")
     List<Expense> getExpensesByYearAndMonth(String year, String monthStr);
 

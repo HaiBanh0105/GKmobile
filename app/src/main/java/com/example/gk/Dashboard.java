@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.example.gk.Database.AppDatabase;
 import com.example.gk.Database.CurrencyDAO;
+import com.example.gk.Repository.ExpenseRepository;
 import com.example.gk.viewmodel.DashboardViewModel;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
@@ -40,13 +41,16 @@ public class Dashboard extends BaseActivity {
     private EditText edtYear;
     private PieChart pieChart;
     private BarChart barChart;
-    private FloatingActionButton AddExpense, Export, Statistics;
+    private FloatingActionButton AddExpense, Statistics;
     private DashboardViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dashboard);
+
+        ExpenseRepository expenseRepository = new ExpenseRepository(this);
+        expenseRepository.syncFromFirestore();
 
         setupToolbar(R.id.toolbarDashboard);
         initDefaultCurrenciesIfNeeded(this);
@@ -75,7 +79,6 @@ public class Dashboard extends BaseActivity {
         barChart = findViewById(R.id.barChart);
         AddExpense = findViewById(R.id.btnAddExpense);
         Statistics = findViewById(R.id.btnStatistics);
-        Export = findViewById(R.id.btnExportPdf);
     }
 
     private void setupChartDefaults() {
@@ -125,10 +128,6 @@ public class Dashboard extends BaseActivity {
         AddExpense.setOnClickListener(v -> {
             Intent intent = new Intent(Dashboard.this, Add_expense.class);
             startActivity(intent);
-        });
-
-        Export.setOnClickListener(v -> {
-            Toast.makeText(this, "Chức năng xuất PDF đang được phát triển", Toast.LENGTH_SHORT).show();
         });
 
         Statistics.setOnClickListener(v -> {

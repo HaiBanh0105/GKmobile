@@ -1,65 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/dashboard"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-
     <!-- Thanh công cụ đáy cố định -->
-    <LinearLayout
-        android:id="@+id/bottomToolbar"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/dashboard"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="#FFFFFF"
-        android:padding="15dp"
-        android:layout_gravity="bottom"
-        android:elevation="4dp"
-        android:gravity="center_vertical">
+        android:layout_height="match_parent">
 
-        <Space
-            android:layout_width="0dp"
+        <!-- Nội dung chính -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="90dp"> <!-- Chừa chỗ cho toolbar -->
+
+            <!-- Nội dung bên trong -->
+        </ScrollView>
+
+        <!-- Toolbar nổi lên -->
+        <LinearLayout
+            android:id="@+id/bottomToolbar"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_gravity="bottom"
+            android:orientation="horizontal"
+            android:padding="12dp"
+            android:background="@android:color/transparent"
+            android:elevation="8dp"
+            android:gravity="center">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/btnStatistics"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:contentDescription="Thống kê"
-            android:src="@android:drawable/ic_menu_info_details" />
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
 
-        <Space
-            android:layout_width="32dp"
-            android:layout_height="wrap_content" />
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btnStatistics"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="Thống kê"
+                android:src="@android:drawable/ic_menu_info_details"
+                app:backgroundTint="@android:color/holo_orange_dark"
+                android:elevation="6dp" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/btnAddExpense"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:contentDescription="Thêm giao dịch"
-            android:src="@android:drawable/ic_input_add" />
+            <Space android:layout_width="40dp" android:layout_height="wrap_content" />
 
-        <Space
-            android:layout_width="32dp"
-            android:layout_height="wrap_content" />
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btnAddExpense"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="Thêm giao dịch"
+                android:src="@android:drawable/ic_input_add"
+                app:backgroundTint="@android:color/holo_green_light"
+                android:elevation="6dp" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/btnExportPdf"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:contentDescription="Xuất báo cáo PDF"
-            android:src="@android:drawable/ic_menu_save" />
 
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-    </LinearLayout>
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        </LinearLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+

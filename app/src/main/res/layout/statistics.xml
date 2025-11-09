@@ -1,117 +1,137 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/statistics"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <!-- Toolbar dùng chung -->
-    <include layout="@layout/include_toolbar_top" />
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground">
 
     <!-- Nội dung chính -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingBottom="120dp"> <!-- Chừa chỗ cho nút nổi -->
 
+        <!-- Toolbar -->
+        <include layout="@layout/include_toolbar_top" />
+
+        <!-- Nội dung -->
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="8dp"
-            android:gravity="center_vertical"
-            android:weightSum="2">
-
-            <TextView
-                android:id="@+id/tvLabelYear"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Chọn năm"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_marginEnd="8dp" />
-
-            <TextView
-                android:id="@+id/tvLabelMonth"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Chọn tháng"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <!-- Bộ lọc năm + tháng nằm ngang -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="16dp"
-            android:gravity="center_vertical"
-            android:weightSum="2">
-
-            <EditText
-                android:id="@+id/edtYear"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="Năm (2025)"
-                android:inputType="number"
-                android:padding="8dp"
-                android:background="@android:drawable/edit_text"
-                android:layout_marginEnd="8dp" />
-
-            <Spinner
-                android:id="@+id/spnMonthFilter"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="8dp" />
-        </LinearLayout>
-
-        <!-- Thanh tìm kiếm -->
-        <EditText
-            android:id="@+id/edtSearch"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Tìm theo danh mục hoặc từ khóa"
-            android:inputType="text"
-            android:drawableStart="@android:drawable/ic_menu_search"
-            android:padding="12dp"
-            android:background="@android:color/white"
-            android:layout_marginBottom="12dp" />
-
-        <!-- Danh sách chi tiêu -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rcv_expense"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:layout_marginBottom="16dp" />
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Nhãn chọn năm/tháng -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp"
+                android:gravity="center_vertical"
+                android:weightSum="2">
+
+                <TextView
+                    android:id="@+id/tvLabelYear"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Chọn năm"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:id="@+id/tvLabelMonth"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Chọn tháng"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Bộ lọc năm + tháng -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp"
+                android:gravity="center_vertical"
+                android:weightSum="2">
+
+                <EditText
+                    android:id="@+id/edtYear"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Năm (2025)"
+                    android:inputType="number"
+                    android:padding="8dp"
+                    android:background="@android:drawable/edit_text"
+                    android:layout_marginEnd="8dp" />
+
+                <Spinner
+                    android:id="@+id/spnMonthFilter"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="8dp" />
+            </LinearLayout>
+
+            <!-- Tìm kiếm -->
+            <EditText
+                android:id="@+id/edtSearch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Tìm theo danh mục hoặc từ khóa"
+                android:inputType="text"
+                android:drawableStart="@android:drawable/ic_menu_search"
+                android:padding="12dp"
+                android:background="@android:color/white"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Danh sách chi tiêu -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rcv_expense"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginBottom="16dp" />
+        </LinearLayout>
     </LinearLayout>
 
-    <!-- Nút xuất PDF -->
-    <Button
-        android:id="@+id/btnExportPdf"
+    <!-- Nút nổi dưới cùng -->
+    <LinearLayout
+        android:id="@+id/fixedButtons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Xuất PDF"
-        android:backgroundTint="#FF9800"
-        android:textColor="#FFFFFF"
-        android:layout_margin="16dp" />
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
 
-    <!-- Nút quay về -->
-    <Button
-        android:id="@+id/btnBack"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Quay về"
-        android:backgroundTint="#4CAF50"
-        android:textColor="#FFFFFF"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp" />
-</LinearLayout>
+        android:elevation="8dp"
+        android:background="@android:color/transparent">
+
+        <Button
+            android:id="@+id/btnExportPdf"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Xuất PDF"
+            android:backgroundTint="#FF9800"
+            android:textColor="#FFFFFF"
+            android:elevation="6dp"
+            android:layout_marginBottom="5dp" />
+
+        <Button
+            android:id="@+id/btnBack"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Quay về"
+            android:backgroundTint="#4CAF50"
+            android:textColor="#FFFFFF"
+            android:elevation="6dp"
+            android:layout_marginBottom="10dp"/>
+    </LinearLayout>
+</FrameLayout>
