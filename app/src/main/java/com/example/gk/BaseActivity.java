@@ -6,7 +6,11 @@ import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.gk.Database.AppDatabase;
+import com.example.gk.Database.ExchangeDAO;
 import com.google.android.material.appbar.MaterialToolbar;
+
+import java.util.List;
 
 public class BaseActivity extends AppCompatActivity {
     protected void setupToolbar(int toolbarId) {
@@ -22,7 +26,15 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     private void showCurrencyDialog() {
-        String[] currencies = {"VND", "USD", "EUR", "JPY"};
+//        String[] currencies = {"VND", "USD", "EUR", "JPY"};
+        ExchangeDAO dao = AppDatabase.getInstance(this).exchangeDAO();
+        List<String> currencyList = dao.getAllBaseCurrencies();
+        // Thêm "VND" nếu chưa có
+        if (!currencyList.contains("VND")) {
+            currencyList.add("VND");
+        }
+        String[] currencies = currencyList.toArray(new String[0]);
+
 
         // Tạo layout Spinner
         Spinner spinner = new Spinner(this);

@@ -151,6 +151,21 @@ public class ExpenseViewModel extends BaseObservable {
                     rate.lastUpdated = System.currentTimeMillis();
                     dao.insert(rate);
 
+                    // Lấy bản ghi mới nhất
+                    ExchangeRate latestExchange = dao.getLatestExchange();
+
+                    // Đồng bộ bản ghi đó lên Firestore
+                    if (latestExchange != null) {
+                        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+                        firestore.collection("exchange_rate")
+                                .document(String.valueOf(latestExchange.getId())) // Dùng ID làm document ID
+                                .set(latestExchange)
+                                .addOnSuccessListener(aVoid ->
+                                        Log.d("Firestore", "Đã đồng bộ ExchangeRate mới nhất: " + latestExchange.getId()))
+                                .addOnFailureListener(e ->
+                                        Log.e("Firestore", "Lỗi khi đồng bộ ExchangeRate mới nhất", e));
+                    }
+
                 } catch (Exception e) {
                     Log.e("ExchangeRate", "Lỗi gọi API: " + e.getMessage(), e);
                     return;

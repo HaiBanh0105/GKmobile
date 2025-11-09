@@ -83,7 +83,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Biểu đồ cột thể hiện tổng thu chi theo tháng"
+                android:text="Biểu đồ cột thể hiện tổng thu chi"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:gravity="center"
@@ -150,7 +150,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Biểu đồ tròn thể hiện tỉ lệ chi tiêu theo tháng"
+                android:text="Biểu đồ tròn thể hiện tỉ lệ chi tiêu"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:gravity="center"

@@ -4,58 +4,57 @@ import android.content.Context;
 import android.util.Log;
 
 import com.example.gk.Database.AppDatabase;
+import com.example.gk.Database.ExchangeDAO;
 import com.example.gk.Database.ExpenseDAO;
-import com.example.gk.Expense;
+import com.example.gk.ExchangeRate;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class ExpenseRepository {
-    private final ExpenseDAO expenseDAO;
+public class EchangeRepository {
+    private final ExchangeDAO exchangeDAO;
     private final FirebaseFirestore firestore;
     private final ExecutorService executor;
 
-    public ExpenseRepository(Context context) {
+    public EchangeRepository(Context context) {
         AppDatabase db = AppDatabase.getInstance(context);
-        expenseDAO = db.expenseDAO();
+        exchangeDAO = db.exchangeDAO();
         firestore = FirebaseFirestore.getInstance();
         executor = Executors.newSingleThreadExecutor();
     }
-
-    // Lưu vào Room và Firestore với ID đồng bộ
-
-    public void syncFromFirestore() {
-        firestore.collection("expenses")
+    public void syncExchangeRatesFromFirestore() {
+        firestore.collection("exchange_rate")
                 .get()
                 .addOnSuccessListener(query -> {
                     executor.execute(() -> {
                         for (DocumentSnapshot doc : query.getDocuments()) {
-                            Expense expense = doc.toObject(Expense.class);
-                            if (expense != null) {
+                            ExchangeRate rate = doc.toObject(ExchangeRate.class);
+                            if (rate != null) {
                                 try {
                                     int id = Integer.parseInt(doc.getId());
-                                    expense.setId(id);
+                                    rate.setId(id);
                                 } catch (NumberFormatException e) {
                                     Log.e("Firestore", "ID không hợp lệ: " + doc.getId());
                                     continue;
                                 }
 
                                 // Kiểm tra trùng lặp trước khi insert
-                                Expense existing = expenseDAO.getExpenseById(expense.getId());
+                                ExchangeRate existing = exchangeDAO.getExchangeById(rate.getId());
                                 if (existing == null) {
-                                    expenseDAO.insertExpense(expense);
-                                    Log.d("Sync", "Đã thêm Expense mới từ Firestore: " + expense.getId());
+                                    exchangeDAO.insert(rate);
+                                    Log.d("Sync", "Đã thêm ExchangeRate mới từ Firestore: " + rate.getId());
                                 } else {
-                                    Log.d("Sync", "Bỏ qua Expense đã tồn tại: " + expense.getId());
+                                    Log.d("Sync", "Bỏ qua ExchangeRate đã tồn tại: " + rate.getId());
                                 }
                             }
                         }
                     });
                 })
-                .addOnFailureListener(e -> Log.e("Firestore", "Lỗi khi đồng bộ từ Firestore", e));
+                .addOnFailureListener(e -> Log.e("Firestore", "Lỗi khi đồng bộ ExchangeRate từ Firestore", e));
     }
+
+
 
 }

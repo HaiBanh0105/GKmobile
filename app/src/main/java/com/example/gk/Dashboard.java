@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.example.gk.Database.AppDatabase;
 import com.example.gk.Database.CurrencyDAO;
+import com.example.gk.Repository.EchangeRepository;
 import com.example.gk.Repository.ExpenseRepository;
 import com.example.gk.viewmodel.DashboardViewModel;
 import com.github.mikephil.charting.charts.BarChart;
@@ -49,8 +50,12 @@ public class Dashboard extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dashboard);
 
+        //Đồng bộ firebase về Room
         ExpenseRepository expenseRepository = new ExpenseRepository(this);
         expenseRepository.syncFromFirestore();
+
+        EchangeRepository echangeRepository = new EchangeRepository(this);
+        echangeRepository.syncExchangeRatesFromFirestore();
 
         setupToolbar(R.id.toolbarDashboard);
         initDefaultCurrenciesIfNeeded(this);
