@@ -1,5 +1,6 @@
 package com.example.gk;
 
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,12 +56,8 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
         }
         holder.tvCategory.setText(category);
 
-        // Loại giao dịch: Thu / Chi
-        holder.tvType.setText(expense.isIncome() ? "Thu" : "Chi");
-
         // Định dạng thời gian
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
-        String formattedDate = sdf.format(new Date(expense.getTimestamp()));
+        String formattedDate = formatDate(expense.getTimestamp());
         holder.tvDate.setText(formattedDate);
     }
 
@@ -81,7 +78,6 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
 
         private TextView tvCurrency;
 
-        private TextView tvType;
         private TextView tvDate;
 
         public ExpenseViewHolder(@NonNull View itemView) {
@@ -89,8 +85,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvAmount = itemView.findViewById(R.id.tvAmount);
             tvCategory = itemView.findViewById(R.id.tvCategory);
-            tvCurrency = itemView.findViewById(R.id.tvCurency);
-            tvType = itemView.findViewById(R.id.tvType);
+            tvCurrency = itemView.findViewById(R.id.tvCurrency);
             tvDate = itemView.findViewById(R.id.tvDate);
         }
     }
@@ -103,6 +98,12 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
         double convertedAmount = amountVND * rateFromVND;
         return String.format("%,.0f %s", convertedAmount, AppConstants.currentCurrency);
     }
+
+    private String formatDate(long timestamp) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        return sdf.format(new Date(timestamp));
+    }
+
 
 
 }

@@ -12,9 +12,9 @@ public class ExchangeRate {
     @PrimaryKey(autoGenerate = true)
     public int id;
 
-    public String baseCurrency;   // ví dụ: "USD"
-    public String targetCurrency; // ví dụ: "VND"
-    public double rate;           // ví dụ: 26331.5
+    public String baseCurrency;
+    public String targetCurrency;
+    public double rate;
     public long lastUpdated;
 
 

@@ -11,7 +11,7 @@ import com.example.gk.ExchangeRate;
 import com.example.gk.Expense;
 import com.example.gk.MonthlyReport;
 
-@Database(entities = {Expense.class, MonthlyReport.class, ExchangeRate.class, CurrencyInfo.class}, version = 6)
+@Database(entities = {Expense.class, MonthlyReport.class, ExchangeRate.class, CurrencyInfo.class}, version = 1)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static final String DATABASE_NAME = "GK.db";

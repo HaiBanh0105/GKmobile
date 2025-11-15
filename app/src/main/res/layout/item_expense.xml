@@ -1,64 +1,149 @@
+<!--<LinearLayout-->
+<!--    xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    android:id="@+id/main1"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="wrap_content"-->
+<!--    android:orientation="horizontal"-->
+<!--    android:padding="8dp"-->
+<!--    android:gravity="center_vertical"-->
+<!--    android:background="@drawable/cell_border">-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/tvTitle"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_weight="2"-->
+<!--        android:text="Tiêu đề"-->
+<!--        android:textSize="14sp"-->
+<!--        android:textColor="#212121"-->
+<!--        android:padding="6dp"-->
+<!--        android:maxLines="1"-->
+<!--        android:ellipsize="end" />-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/tvAmount"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_weight="2"-->
+<!--        android:text="Số tiền"-->
+<!--        android:textSize="14sp"-->
+<!--        android:textColor="#212121"-->
+<!--        android:padding="6dp"-->
+<!--        android:gravity="start"-->
+<!--        android:maxLines="1"-->
+<!--        android:ellipsize="end" />-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/tvCurrency"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_weight="1"-->
+<!--        android:text="VND"-->
+<!--        android:textSize="14sp"-->
+<!--        android:textColor="#424242"-->
+<!--        android:padding="6dp"-->
+<!--        android:gravity="center"-->
+<!--        android:maxLines="1"-->
+<!--        android:ellipsize="end" />-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/tvCategory"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_weight="2"-->
+<!--        android:text="Danh mục"-->
+<!--        android:textSize="14sp"-->
+<!--        android:textColor="#424242"-->
+<!--        android:padding="6dp"-->
+<!--        android:maxLines="1"-->
+<!--        android:ellipsize="end" />-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/tvDate"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_weight="1"-->
+<!--        android:text="Ngày"-->
+<!--        android:textSize="14sp"-->
+<!--        android:textColor="#424242"-->
+<!--        android:padding="6dp"-->
+<!--        android:gravity="end"-->
+<!--        android:maxLines="1"-->
+<!--        android:ellipsize="end" />-->
+<!--</LinearLayout>-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main1"
-    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="5dp"
-    android:background="@drawable/cell_border"
-    >
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:gravity="center_vertical"
+    android:background="@drawable/cell_border">
 
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="2"
-        android:text="Title"
-        android:padding="4dp"
-        android:textSize="12sp" />
+        android:text="Tiêu đề"
+        android:textSize="14sp"
+        android:textColor="#212121"
+        android:padding="6dp"
+        android:gravity="start|center_vertical"
+        android:maxLines="1"
+        android:ellipsize="end" />
 
     <TextView
         android:id="@+id/tvAmount"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:text="Amount"
-        android:padding="4dp"
-        android:textSize="12sp" />
+        android:layout_weight="2.5"
+        android:ellipsize="end"
+        android:gravity="start|center_vertical"
+        android:maxLines="1"
+        android:padding="6dp"
+        android:text="Số tiền"
+        android:textColor="#212121"
+        android:textSize="14sp" />
 
     <TextView
-        android:id="@+id/tvCurency"
+        android:id="@+id/tvCurrency"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Currency"
-        android:padding="4dp"
-        android:textSize="12sp" />
+        android:layout_weight="0"
+        android:text="VND"
+        android:textSize="14sp"
+        android:textColor="#424242"
+        android:padding="6dp"
+        android:gravity="start|center_vertical"
+        android:maxLines="1"
+        android:ellipsize="end" />
 
     <TextView
         android:id="@+id/tvCategory"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Category"
-        android:padding="4dp"
-        android:textSize="12sp" />
-
-    <TextView
-        android:id="@+id/tvType"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Type"
-        android:padding="4dp"
-        android:textSize="12sp" />
+        android:layout_weight="2"
+        android:text="Danh mục"
+        android:textSize="14sp"
+        android:textColor="#424242"
+        android:padding="6dp"
+        android:gravity="start|center_vertical"
+        android:maxLines="1"
+        android:ellipsize="end" />
 
     <TextView
         android:id="@+id/tvDate"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Date"
-        android:padding="4dp"
-        android:textSize="12sp" />
+        android:layout_weight="1.5"
+        android:text="Ngày"
+        android:textSize="14sp"
+        android:textColor="#424242"
+        android:padding="6dp"
+        android:gravity="start|center_vertical"
+        android:maxLines="1"
+        android:ellipsize="end" />
 </LinearLayout>
+

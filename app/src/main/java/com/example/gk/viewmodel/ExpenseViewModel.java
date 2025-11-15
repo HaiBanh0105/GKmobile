@@ -194,8 +194,6 @@ public class ExpenseViewModel extends BaseObservable {
                         .addOnFailureListener(e -> Log.e("Firestore", "Lỗi khi đồng bộ Expense mới nhất", e));
             }
 
-
-
         });
     }
     public boolean isValid() {

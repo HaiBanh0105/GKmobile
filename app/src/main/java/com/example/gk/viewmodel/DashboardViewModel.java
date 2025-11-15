@@ -47,7 +47,7 @@ public class DashboardViewModel {
 
         double totalIncome = 0;
         double totalExpense = 0;
-        double difference = 0;
+
 
         Map<String, Double> categoryTotals = new HashMap<>();
 
