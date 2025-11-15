@@ -13,7 +13,7 @@ import java.util.List;
 public interface ReportDAO {
 
     @Insert
-    void insertExpense(MonthlyReport report);
+    void insertReport(MonthlyReport report);
 
     @Query("select * from monthly_reports")
     List<MonthlyReport> getListReport();

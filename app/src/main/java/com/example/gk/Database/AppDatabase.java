@@ -11,11 +11,18 @@ import com.example.gk.ExchangeRate;
 import com.example.gk.Expense;
 import com.example.gk.MonthlyReport;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 @Database(entities = {Expense.class, MonthlyReport.class, ExchangeRate.class, CurrencyInfo.class}, version = 1)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static final String DATABASE_NAME = "GK.db";
     private static AppDatabase instance;
+
+    // Khai báo Executor để chạy background
+    private static final ExecutorService databaseWriteExecutor =
+            Executors.newFixedThreadPool(4);
 
     public static synchronized AppDatabase getInstance(Context context) {
         if (instance == null) {

@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.pdf.PdfDocument;
 import android.os.Bundle;
+import android.os.Environment;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -93,6 +94,7 @@ public class Export_report extends AppCompatActivity {
         btnCancel.setOnClickListener(v -> finish());
         btnExportPdf.setOnClickListener(v -> exportPdf());
     }
+
     private void exportPdf() {
         String title = tvMonthYear.getText().toString();
         String currentTime = "Ngày tạo: " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
@@ -132,12 +134,12 @@ public class Export_report extends AppCompatActivity {
         canvas.drawText(title, centerX, y, contentPaint); y += 30;
         canvas.drawLine(margin, y, pageWidth - margin, y, linePaint); y += 20;
 
-        // Column setup
+        // Column setup (4 cột: Mô tả – Số tiền – Danh mục – Ngày)
         int tableWidth = pageWidth - 2 * margin;
-        int col1Width = (int)(tableWidth * 0.25); // Mục
+        int col1Width = (int)(tableWidth * 0.30); // Mô tả
         int col2Width = (int)(tableWidth * 0.25); // Số tiền
-        int col3Width = (int)(tableWidth * 0.15); // Loại
-        int col4Width = (int)(tableWidth * 0.30); // Ngày
+        int col3Width = (int)(tableWidth * 0.25); // Danh mục
+        int col4Width = (int)(tableWidth * 0.20); // Ngày
 
         int col1 = margin;
         int col2 = col1 + col1Width;
@@ -145,11 +147,11 @@ public class Export_report extends AppCompatActivity {
         int col4 = col3 + col3Width;
 
         // Column titles
-        contentPaint.setTextAlign(Paint.Align.CENTER);
-        canvas.drawText("Mục", col1 + col1Width / 2, y, contentPaint);
-        canvas.drawText("Số tiền", col2 + col2Width / 2, y, contentPaint);
-        canvas.drawText("Loại", col3 + col3Width / 2, y, contentPaint);
-        canvas.drawText("Ngày", col4 + col4Width / 2, y, contentPaint);
+        contentPaint.setTextAlign(Paint.Align.LEFT);
+        canvas.drawText("Mô tả", col1 + 5, y, contentPaint);
+        canvas.drawText("Số tiền", col2 + 5, y, contentPaint);
+        canvas.drawText("Danh mục", col3 + 5, y, contentPaint);
+        canvas.drawText("Ngày", col4 + 5, y, contentPaint);
         y += rowHeight;
         canvas.drawLine(margin, y, pageWidth - margin, y, linePaint); y += 5;
 
@@ -172,12 +174,16 @@ public class Export_report extends AppCompatActivity {
             // Draw cell content
             contentPaint.setTextAlign(Paint.Align.LEFT);
             canvas.drawText(e.title, col1 + 5, y + 20, contentPaint);
+
             double convertedAmount = e.amount / rate;
             String formattedAmount = String.format("%,.0f %s", convertedAmount, AppConstants.currentCurrency);
-            contentPaint.setTextAlign(Paint.Align.CENTER);
-            canvas.drawText(formattedAmount, col2 + col2Width / 2, y + 20, contentPaint);
-            canvas.drawText(e.isIncome ? "Thu" : "Chi", col3 + col3Width / 2, y + 20, contentPaint);
-            canvas.drawText(formatDate(e.timestamp), col4 + col4Width / 2, y + 20, contentPaint);
+            canvas.drawText(formattedAmount, col2 + 5, y + 20, contentPaint);
+
+            String category = e.category != null ? e.category : "Khác";
+            category = category.substring(0, 1).toUpperCase() + category.substring(1).toLowerCase();
+            canvas.drawText(category, col3 + 5, y + 20, contentPaint);
+
+            canvas.drawText(formatDate(e.timestamp), col4 + 5, y + 20, contentPaint);
 
             y += rowHeight;
         }
@@ -197,11 +203,13 @@ public class Export_report extends AppCompatActivity {
         pdfDocument.finishPage(page);
 
         // Save PDF
-        File file = new File(getExternalFilesDir(null), "baocao_" + System.currentTimeMillis() + ".pdf");
+//        File file = new File(getExternalFilesDir(null), "baocao_" + System.currentTimeMillis() + ".pdf");
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+                "baocao_" + System.currentTimeMillis() + ".pdf");
         try {
             pdfDocument.writeTo(new FileOutputStream(file));
             pdfDocument.close();
-            Toast.makeText(this, "Đã xuất file PDF thành công!!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Đã xuất file PDF thành công!!, file nằm ở thư mục download của máy", Toast.LENGTH_LONG).show();
 
             // Insert into database
             MonthlyReport report = new MonthlyReport();
@@ -211,13 +219,16 @@ public class Export_report extends AppCompatActivity {
             report.setTotalExpense(Double.parseDouble(expenseStr));
             report.setGeneratedAt(System.currentTimeMillis());
 
-            AppDatabase.getInstance(this).reportDAO().insertExpense(report);
+            AppDatabase.databaseWriteExecutor.execute(() -> {
+                AppDatabase.getInstance(this).reportDAO().insertReport(report);
+            });
             finish();
         } catch (IOException e) {
             e.printStackTrace();
             Toast.makeText(this, "Lỗi khi lưu PDF", Toast.LENGTH_SHORT).show();
         }
     }
+
 
 
 
