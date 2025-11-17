@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.gk.Database.AppDatabase;
 import com.example.gk.Database.ExchangeDAO;
+import com.example.gk.Database.ExpenseDAO;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -41,7 +42,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
         holder.tvTitle.setText(expense.getTitle());
 
         // Format số tiền: có dấu phẩy và đơn vị VND
-        String formattedAmount = formatCurrency(holder.itemView, expense.getAmount());
+        String formattedAmount = formatCurrency(holder.itemView, expense.getAmountIn(),expense.getCurrency());
 
         holder.tvAmount.setText(formattedAmount);
 
@@ -90,13 +91,9 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
         }
     }
 
-    private String formatCurrency(View view, double amountVND) {
-        ExchangeDAO exchangeDAO = AppDatabase.getInstance(view.getContext()).exchangeDAO();
-        ExchangeRate rate = exchangeDAO.getRate(AppConstants.currentCurrency, "VND");
-        double rateFromVND = (rate != null && rate.rate > 0) ? 1.0 / rate.rate : 1.0;
+    private String formatCurrency(View view, double amountVND, String currency) {
 
-        double convertedAmount = amountVND * rateFromVND;
-        return String.format("%,.0f %s", convertedAmount, AppConstants.currentCurrency);
+        return String.format("%,.0f %s", amountVND , currency);
     }
 
     private String formatDate(long timestamp) {

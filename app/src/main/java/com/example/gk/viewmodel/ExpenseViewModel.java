@@ -59,6 +59,17 @@ public class ExpenseViewModel extends BaseObservable {
     }
 
     @Bindable
+    public String getAmountIn() {
+        return String.valueOf(expense.getAmountIn());
+    }
+
+    public void setAmountIn(String amountStr) {
+        double value = Double.parseDouble(amountStr);
+        expense.setAmountIn(value);
+        notifyPropertyChanged(BR.amountIn);
+    }
+
+    @Bindable
     public String getCurrency()
     {
         return expense.getCurrency();
@@ -105,7 +116,7 @@ public class ExpenseViewModel extends BaseObservable {
         Executors.newSingleThreadExecutor().execute(() -> {
             String baseCurrency = expense.getCurrency(); // đơn vị người dùng nhập
             String targetCurrency = "VND";               // đơn vị mặc định để lưu
-            double originalAmount = expense.getAmount();
+            double originalAmount = expense.getAmountIn(); //quy đổi về vnd để tính tổng
 
             ExchangeDAO dao = AppDatabase.getInstance(context).exchangeDAO();
             ExchangeRate rate = dao.getLatestRate(baseCurrency, targetCurrency);
@@ -143,13 +154,16 @@ public class ExpenseViewModel extends BaseObservable {
 
                     double rateValue = info.getDouble("quote");
 
-                    // Lưu tỷ giá mới
-                    rate = new ExchangeRate();
-                    rate.baseCurrency = baseCurrency;
-                    rate.targetCurrency = targetCurrency;
-                    rate.rate = rateValue;
-                    rate.lastUpdated = System.currentTimeMillis();
-                    dao.insert(rate);
+
+                    // Nếu rate chưa có hoặc giá trị mới khác giá trị cũ thì mới insert
+                    if (rate == null || rate.rate != rateValue) {
+                        rate = new ExchangeRate();
+                        rate.baseCurrency = baseCurrency;
+                        rate.targetCurrency = targetCurrency;
+                        rate.rate = rateValue;
+                        rate.lastUpdated = System.currentTimeMillis();
+                        dao.insert(rate);
+                    }
 
                     // Lấy bản ghi mới nhất
                     ExchangeRate latestExchange = dao.getLatestExchange();
@@ -175,6 +189,7 @@ public class ExpenseViewModel extends BaseObservable {
             // Quy đổi sang VND
             double convertedAmount = originalAmount * rate.rate;
             expense.setAmount(convertedAmount);
+            expense.setAmountIn(expense.getAmountIn());
 
             // Lưu giao dịch
             // Lưu vào Room
@@ -198,7 +213,7 @@ public class ExpenseViewModel extends BaseObservable {
     }
     public boolean isValid() {
         if (expense.getTitle() == null || expense.getTitle().trim().isEmpty()) return false;
-        if (expense.getAmount() <= 0) return false;
+        if (expense.getAmountIn() <= 0) return false;
         if (expense.getCurrency() == null || expense.getCurrency().trim().isEmpty()) return false;
         if (expense.getCategory() == null || expense.getCategory().trim().isEmpty()) return false;
         return true;

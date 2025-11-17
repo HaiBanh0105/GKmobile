@@ -188,7 +188,7 @@
                             android:layout_height="wrap_content"
                             android:hint="Nhập số tiền"
                             android:inputType="numberDecimal"
-                            android:text="@={expenseViewModel.amount}"
+                            android:text="@={expenseViewModel.amountIn}"
                             android:background="@android:drawable/edit_text"
                             android:padding="10dp"
                             android:layout_marginBottom="30dp"/>

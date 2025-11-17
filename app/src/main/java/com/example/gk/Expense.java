@@ -12,7 +12,8 @@ public class Expense implements Serializable {
     public int id;
 
     public String title;           // Tiêu đề (ví dụ: "Ăn sáng", "Lương")
-    public double amount;          // Số tiền
+    public double amountIn;        // Số tiền nhập vào
+    public double amount;          // Số tiền quy đổi
     public String currency;        // Đơn vị tiền tệ (VND, USD...)
     public String category;        // Loại (Ăn uống, Giải trí, Lương...)
     public boolean isIncome;       // true nếu là thu nhập, false nếu là chi tiêu
@@ -22,9 +23,10 @@ public class Expense implements Serializable {
         // Constructor rỗng cho Room
     }
     @Ignore
-    public Expense(String title, double amount, String currency, String category, boolean isIncome, long timestamp) {
+    public Expense(String title, double amountIn, double amount, String currency, String category, boolean isIncome, long timestamp) {
         this.title = title;
         this.amount = amount;
+        this.amountIn = amountIn;
         this.currency = currency;
         this.category = category;
         this.isIncome = isIncome;
@@ -45,6 +47,14 @@ public class Expense implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public double getAmountIn() {
+        return amountIn;
+    }
+
+    public void setAmountIn(double amountIn) {
+        this.amountIn = amountIn;
     }
 
     public double getAmount() {

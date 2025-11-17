@@ -25,7 +25,7 @@ public class BaseActivity extends AppCompatActivity {
         });
     }
 
-    private void showCurrencyDialog() {
+    public void showCurrencyDialog() {
 //        String[] currencies = {"VND", "USD", "EUR", "JPY"};
         ExchangeDAO dao = AppDatabase.getInstance(this).exchangeDAO();
         List<String> currencyList = dao.getAllBaseCurrencies();

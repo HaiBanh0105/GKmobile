@@ -13,7 +13,7 @@ import com.example.gk.Expense;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Expense.class, ExchangeRate.class, CurrencyInfo.class}, version = 2)
+@Database(entities = {Expense.class, ExchangeRate.class, CurrencyInfo.class}, version = 4)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static final String DATABASE_NAME = "GK.db";

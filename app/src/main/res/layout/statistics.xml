@@ -99,13 +99,13 @@
                 android:layout_height="wrap_content"
                 android:padding="8dp"
                 android:background="@drawable/cell_border"
-                android:gravity="center_vertical">
+                android:gravity="start|center_vertical">
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
-                    android:gravity="center"
+                    android:gravity="start|center_vertical"
                     android:text="Mô tả"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -117,7 +117,7 @@
                     android:text="Số tiền"
                     android:textStyle="bold"
                     android:textSize="14sp"
-                    android:gravity="center"/>
+                    android:gravity="start|center_vertical"/>
 
                 <TextView
                     android:layout_width="0dp"
@@ -126,7 +126,7 @@
                     android:text="Danh mục"
                     android:textStyle="bold"
                     android:textSize="14sp"
-                    android:gravity="center"/>
+                    android:gravity="start|center_vertical"/>
 
                 <TextView
                     android:layout_width="0dp"
@@ -135,7 +135,7 @@
                     android:text="Ngày"
                     android:textStyle="bold"
                     android:textSize="14sp"
-                    android:gravity="center"/>
+                    android:gravity="start|center_vertical"/>
             </LinearLayout>
             <!-- Danh sách chi tiêu -->
             <androidx.recyclerview.widget.RecyclerView
