@@ -211,17 +211,6 @@ public class Export_report extends AppCompatActivity {
             pdfDocument.close();
             Toast.makeText(this, "Đã xuất file PDF thành công!!, file nằm ở thư mục download của máy", Toast.LENGTH_LONG).show();
 
-            // Insert into database
-            MonthlyReport report = new MonthlyReport();
-            report.setMonth(month);
-            report.setYear(Integer.parseInt(year));
-            report.setTotalIncome(Double.parseDouble(incomeStr));
-            report.setTotalExpense(Double.parseDouble(expenseStr));
-            report.setGeneratedAt(System.currentTimeMillis());
-
-            AppDatabase.databaseWriteExecutor.execute(() -> {
-                AppDatabase.getInstance(this).reportDAO().insertReport(report);
-            });
             finish();
         } catch (IOException e) {
             e.printStackTrace();

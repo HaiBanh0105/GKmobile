@@ -9,12 +9,11 @@ import androidx.room.RoomDatabase;
 import com.example.gk.CurrencyInfo;
 import com.example.gk.ExchangeRate;
 import com.example.gk.Expense;
-import com.example.gk.MonthlyReport;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Expense.class, MonthlyReport.class, ExchangeRate.class, CurrencyInfo.class}, version = 1)
+@Database(entities = {Expense.class, ExchangeRate.class, CurrencyInfo.class}, version = 2)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static final String DATABASE_NAME = "GK.db";
@@ -36,8 +35,11 @@ public abstract class AppDatabase extends RoomDatabase {
         return instance;
     }
 
+    public static ExecutorService getDatabaseWriteExecutor() {
+        return databaseWriteExecutor;
+    }
+
     public abstract ExpenseDAO expenseDAO();
-    public abstract ReportDAO reportDAO();
     public abstract ExchangeDAO exchangeDAO();
     public abstract CurrencyDAO currencyDAO();
 

@@ -54,6 +54,16 @@
                 android:elevation="6dp" />
 
 
+            <Space android:layout_width="40dp" android:layout_height="wrap_content" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btnCurrencyDialog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="Chuyển đổi tiền tệ"
+                android:src="@android:drawable/ic_dialog_dialer"
+                app:backgroundTint="@android:color/holo_blue_light"
+                android:elevation="6dp" />
             <Space
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

@@ -6,16 +6,22 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+
 import com.example.gk.Database.AppDatabase;
 import com.example.gk.Database.CurrencyDAO;
+import com.example.gk.Database.ExchangeDAO;
 import com.example.gk.Repository.EchangeRepository;
 import com.example.gk.Repository.ExpenseRepository;
 import com.example.gk.viewmodel.DashboardViewModel;
@@ -27,6 +33,8 @@ import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import org.w3c.dom.Text;
 
 import java.text.NumberFormat;
 import java.util.Arrays;
@@ -139,6 +147,15 @@ public class Dashboard extends BaseActivity {
             Intent intent = new Intent(Dashboard.this, Statistics.class);
             startActivity(intent);
         });
+
+        FloatingActionButton btnCurrencyDialog = findViewById(R.id.btnCurrencyDialog);
+        btnCurrencyDialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showCurrencyConverterDialog(Dashboard.this);
+            }
+        });
+
     }
 
     public void loadSummary() {
@@ -221,10 +238,116 @@ public class Dashboard extends BaseActivity {
         });
     }
 
+
+    public void showCurrencyConverterDialog(Context context) {
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View dialogView = inflater.inflate(R.layout.activity_currency_converter, null);
+
+        AlertDialog dialog = new AlertDialog.Builder(context)
+                .setView(dialogView)
+                .setCancelable(true)
+                .create();
+
+        EditText amountInput = dialogView.findViewById(R.id.amountInput);
+        TextView resultText = dialogView.findViewById(R.id.resultText);
+        Spinner spinnerFrom = dialogView.findViewById(R.id.spinnerFromCurrency);
+        Spinner spinnerTo = dialogView.findViewById(R.id.spinnerToCurrency);
+        ImageView swap = dialogView.findViewById(R.id.btnSwap);
+
+        ExchangeDAO dao = AppDatabase.getInstance(this).exchangeDAO();
+        List<String> currencyList = dao.getAllBaseCurrencies();
+        // Thêm "VND" nếu chưa có
+        if (!currencyList.contains("VND")) {
+            currencyList.add("VND");
+        }
+        String[] currencies = currencyList.toArray(new String[0]);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item, currencies);
+        spinnerFrom.setAdapter(adapter);
+        spinnerTo.setAdapter(adapter);
+
+        // Hàm cập nhật kết quả
+        Runnable updateResult = () -> {
+            try {
+                String Currency_In = spinnerFrom.getSelectedItem().toString();
+                String Currency_out = spinnerTo.getSelectedItem().toString();
+
+                ExchangeRate rateIn_VND = dao.getLatestRate(Currency_In, "VND");
+                ExchangeRate rateOut_VND = dao.getLatestRate(Currency_out, "VND");
+
+                double rateInValue = rateIn_VND.getRate();
+                double rateOutValue = rateOut_VND.getRate();
+
+                String amountStr = amountInput.getText().toString();
+                double amountEntered = 0;
+                if (!amountStr.isEmpty()) {
+                    amountEntered = Double.parseDouble(amountStr);
+                }
+
+                double amount = (rateInValue / rateOutValue) * amountEntered;
+                NumberFormat formatter = NumberFormat.getInstance(new Locale("vi", "VN"));
+                formatter.setMaximumFractionDigits(2);
+                String formattedAmount = formatter.format(amount);
+                resultText.setText(formattedAmount);
+
+            } catch (Exception e) {
+                resultText.setText("");
+            }
+        };
+
+        // Bắt sự kiện nhập số
+        amountInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {
+                updateResult.run();
+            }
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        });
+
+        // Bắt sự kiện thay đổi đơn vị
+        spinnerFrom.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                updateResult.run();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        spinnerTo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                updateResult.run();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        swap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Lấy vị trí hiện tại của 2 spinner
+                int fromPos = spinnerFrom.getSelectedItemPosition();
+                int toPos = spinnerTo.getSelectedItemPosition();
+
+                // Hoán đổi vị trí
+                spinnerFrom.setSelection(toPos);
+                spinnerTo.setSelection(fromPos);
+                updateResult.run();
+            }
+        });
+
+        dialog.show();
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
         loadSummary();
     }
+
+
 
 }
