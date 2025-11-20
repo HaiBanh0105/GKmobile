@@ -36,58 +36,7 @@ public class DashboardViewModel {
     public PieData pieData;
     public BarData barData;
 
-//    public void loadData(Context context, String yearStr, int monthIndex) {
-//        ExpenseDAO expenseDAO = AppDatabase.getInstance(context).expenseDAO();
-//        ExchangeDAO exchangeDAO = AppDatabase.getInstance(context).exchangeDAO();
-//        ExchangeRate rate = exchangeDAO.getRate(AppConstants.currentCurrency,"VND");
-//        double rateFromVND = (rate != null && rate.rate > 0) ? rate.rate : 1.0;
-//
-//
-//        List<Expense> filteredList = (monthIndex == 0)
-//                ? expenseDAO.getExpensesByYearOnly(yearStr)
-//                : expenseDAO.getExpensesByYearAndMonth(yearStr, String.format("%02d", monthIndex));
-//
-//        double totalIncome = 0;
-//        double totalExpense = 0;
-//
-//
-//        Map<String, Double> categoryTotals = new HashMap<>();
-//
-//        for (Expense e : filteredList) {
-//            double amountVND = e.amount; // đã được quy đổi khi lưu
-//
-//            if (e.isIncome) {
-//                totalIncome += amountVND;
-//            } else {
-//                totalExpense += amountVND;
-//
-//                String category = (e.category != null && !e.category.isEmpty()) ? e.category : "Khác";
-//                categoryTotals.put(category, categoryTotals.getOrDefault(category, 0.0) + amountVND);
-//            }
-//        }
-//
-//        convertedIncome = totalIncome / rateFromVND;
-//        convertedExpense = totalExpense / rateFromVND;
-//        convertedDifference = convertedIncome - convertedExpense;
-//
-//
-//        List<Integer> customColors = Arrays.asList(
-//                Color.parseColor("#4CAF50"), // xanh lá
-//                Color.parseColor("#FF9800"), // cam
-//                Color.parseColor("#F44336"), // đỏ
-//                Color.parseColor("#2196F3"), // xanh dương
-//                Color.parseColor("#9C27B0"), // tím
-//                Color.parseColor("#00BCD4"), // xanh ngọc
-//                Color.parseColor("#795548"), // nâu
-//                Color.parseColor("#607D8B"), // xám
-//                Color.parseColor("#E91E63"), // hồng
-//                Color.parseColor("#8BC34A")  // xanh lá nhạt
-//                // thêm màu nếu cần
-//        );
-//
-//        pieData = generatePieData(categoryTotals, customColors);
-//        barData = generateBarData((float) convertedIncome, (float) convertedExpense);
-//    }
+
 public void loadData(Context context, String yearStr, int monthIndex, Runnable onLoaded) {
 
     Executors.newSingleThreadExecutor().execute(() -> {
@@ -101,28 +50,7 @@ public void loadData(Context context, String yearStr, int monthIndex, Runnable o
                 ? expenseDAO.getExpensesByYearOnly(yearStr)
                 : expenseDAO.getExpensesByYearAndMonth(yearStr, String.format("%02d", monthIndex));
 
-        double totalIncome = 0;
-        double totalExpense = 0;
-
-        Map<String, Double> categoryTotals = new HashMap<>();
-
-        for (Expense e : filteredList) {
-            double amountVND = e.amount; // đã được quy đổi khi lưu
-
-            if (e.isIncome) {
-                totalIncome += amountVND;
-            } else {
-                totalExpense += amountVND;
-
-                String category = (e.category != null && !e.category.isEmpty()) ? e.category : "Khác";
-                categoryTotals.put(category, categoryTotals.getOrDefault(category, 0.0) + amountVND);
-            }
-        }
-
-        // Cập nhật các biến trong ViewModel
-        convertedIncome = totalIncome / rateFromVND;
-        convertedExpense = totalExpense / rateFromVND;
-        convertedDifference = convertedIncome - convertedExpense;
+        calculateStatistics(filteredList, rateFromVND);
 
         List<Integer> customColors = Arrays.asList(
                 Color.parseColor("#4CAF50"), // xanh lá
@@ -150,6 +78,34 @@ public void loadData(Context context, String yearStr, int monthIndex, Runnable o
     });
 }
 
+    public Map<String, Double> categoryTotals = new HashMap<>();
+
+    public void calculateStatistics(List<Expense> filteredList, double rateFromVND) {
+        double totalIncome = 0;
+        double totalExpense = 0;
+        categoryTotals.clear(); // Reset map cũ
+
+        for (Expense e : filteredList) {
+            double amountVND = e.amount;
+
+            if (e.isIncome) {
+                totalIncome += amountVND;
+            } else {
+                totalExpense += amountVND;
+
+                String category = (e.category != null && !e.category.isEmpty()) ? e.category : "Khác";
+                categoryTotals.put(category, categoryTotals.getOrDefault(category, 0.0) + amountVND);
+            }
+        }
+
+        // Cập nhật các biến trong ViewModel (để giao diện hiển thị)
+        // rateFromVND không được bằng 0 để tránh lỗi chia cho 0
+        if (rateFromVND == 0) rateFromVND = 1;
+
+        this.convertedIncome = totalIncome / rateFromVND;
+        this.convertedExpense = totalExpense / rateFromVND;
+        this.convertedDifference = convertedIncome - convertedExpense;
+    }
     public PieData generatePieData(Map<String, Double> categoryTotals, List<Integer> customColors) {
         List<PieEntry> pieEntries = new ArrayList<>();
         double total = categoryTotals.values().stream().mapToDouble(Double::doubleValue).sum();

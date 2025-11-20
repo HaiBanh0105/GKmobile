@@ -79,6 +79,7 @@ public class Dashboard extends BaseActivity {
         loadSummary(); // initial load
     }
 
+
     private void initUi() {
         tvTotalIncome = findViewById(R.id.tvTotalIncome);
         tvTotalExpense = findViewById(R.id.tvTotalExpense);
