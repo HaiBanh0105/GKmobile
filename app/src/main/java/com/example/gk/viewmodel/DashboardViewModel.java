@@ -2,6 +2,8 @@ package com.example.gk.viewmodel;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Handler;
+import android.os.Looper;
 
 import com.example.gk.AppConstants;
 import com.example.gk.Database.AppDatabase;
@@ -23,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.Executors;
 
 public class DashboardViewModel {
 
@@ -33,12 +36,66 @@ public class DashboardViewModel {
     public PieData pieData;
     public BarData barData;
 
-    public void loadData(Context context, String yearStr, int monthIndex) {
+//    public void loadData(Context context, String yearStr, int monthIndex) {
+//        ExpenseDAO expenseDAO = AppDatabase.getInstance(context).expenseDAO();
+//        ExchangeDAO exchangeDAO = AppDatabase.getInstance(context).exchangeDAO();
+//        ExchangeRate rate = exchangeDAO.getRate(AppConstants.currentCurrency,"VND");
+//        double rateFromVND = (rate != null && rate.rate > 0) ? rate.rate : 1.0;
+//
+//
+//        List<Expense> filteredList = (monthIndex == 0)
+//                ? expenseDAO.getExpensesByYearOnly(yearStr)
+//                : expenseDAO.getExpensesByYearAndMonth(yearStr, String.format("%02d", monthIndex));
+//
+//        double totalIncome = 0;
+//        double totalExpense = 0;
+//
+//
+//        Map<String, Double> categoryTotals = new HashMap<>();
+//
+//        for (Expense e : filteredList) {
+//            double amountVND = e.amount; // đã được quy đổi khi lưu
+//
+//            if (e.isIncome) {
+//                totalIncome += amountVND;
+//            } else {
+//                totalExpense += amountVND;
+//
+//                String category = (e.category != null && !e.category.isEmpty()) ? e.category : "Khác";
+//                categoryTotals.put(category, categoryTotals.getOrDefault(category, 0.0) + amountVND);
+//            }
+//        }
+//
+//        convertedIncome = totalIncome / rateFromVND;
+//        convertedExpense = totalExpense / rateFromVND;
+//        convertedDifference = convertedIncome - convertedExpense;
+//
+//
+//        List<Integer> customColors = Arrays.asList(
+//                Color.parseColor("#4CAF50"), // xanh lá
+//                Color.parseColor("#FF9800"), // cam
+//                Color.parseColor("#F44336"), // đỏ
+//                Color.parseColor("#2196F3"), // xanh dương
+//                Color.parseColor("#9C27B0"), // tím
+//                Color.parseColor("#00BCD4"), // xanh ngọc
+//                Color.parseColor("#795548"), // nâu
+//                Color.parseColor("#607D8B"), // xám
+//                Color.parseColor("#E91E63"), // hồng
+//                Color.parseColor("#8BC34A")  // xanh lá nhạt
+//                // thêm màu nếu cần
+//        );
+//
+//        pieData = generatePieData(categoryTotals, customColors);
+//        barData = generateBarData((float) convertedIncome, (float) convertedExpense);
+//    }
+public void loadData(Context context, String yearStr, int monthIndex, Runnable onLoaded) {
+
+    Executors.newSingleThreadExecutor().execute(() -> {
+
         ExpenseDAO expenseDAO = AppDatabase.getInstance(context).expenseDAO();
         ExchangeDAO exchangeDAO = AppDatabase.getInstance(context).exchangeDAO();
-        ExchangeRate rate = exchangeDAO.getRate(AppConstants.currentCurrency,"VND");
+        ExchangeRate rate = exchangeDAO.getRate(AppConstants.currentCurrency, "VND");
         double rateFromVND = (rate != null && rate.rate > 0) ? rate.rate : 1.0;
-
 
         List<Expense> filteredList = (monthIndex == 0)
                 ? expenseDAO.getExpensesByYearOnly(yearStr)
@@ -46,7 +103,6 @@ public class DashboardViewModel {
 
         double totalIncome = 0;
         double totalExpense = 0;
-
 
         Map<String, Double> categoryTotals = new HashMap<>();
 
@@ -63,10 +119,10 @@ public class DashboardViewModel {
             }
         }
 
+        // Cập nhật các biến trong ViewModel
         convertedIncome = totalIncome / rateFromVND;
         convertedExpense = totalExpense / rateFromVND;
         convertedDifference = convertedIncome - convertedExpense;
-
 
         List<Integer> customColors = Arrays.asList(
                 Color.parseColor("#4CAF50"), // xanh lá
@@ -79,12 +135,20 @@ public class DashboardViewModel {
                 Color.parseColor("#607D8B"), // xám
                 Color.parseColor("#E91E63"), // hồng
                 Color.parseColor("#8BC34A")  // xanh lá nhạt
-                // thêm màu nếu cần
         );
 
         pieData = generatePieData(categoryTotals, customColors);
         barData = generateBarData((float) convertedIncome, (float) convertedExpense);
-    }
+
+
+        //Sau khi tính toán xong, dùng Handler để báo về Main Thread
+        new Handler(Looper.getMainLooper()).post(() -> {
+            if (onLoaded != null) {
+                onLoaded.run(); // Kích hoạt cập nhật UI ở Dashboard
+            }
+        });
+    });
+}
 
     public PieData generatePieData(Map<String, Double> categoryTotals, List<Integer> customColors) {
         List<PieEntry> pieEntries = new ArrayList<>();

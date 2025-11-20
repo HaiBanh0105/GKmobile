@@ -119,11 +119,8 @@ public class Add_expense extends BaseActivity {
                 viewModel.setTimestamp(System.currentTimeMillis());
                 viewModel.saveExpense(this);
                 runOnUiThread(() -> {
-                    Toast.makeText(this, "Đã lưu giao dịch", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(this, Dashboard.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    startActivity(intent);
                     finish();
+                    Toast.makeText(this, "Đã lưu giao dịch", Toast.LENGTH_SHORT).show();
                 });
             });
         });
@@ -133,8 +130,6 @@ public class Add_expense extends BaseActivity {
                     .setTitle("Xác nhận")
                     .setMessage("Bạn có chắc muốn hủy?")
                     .setPositiveButton("Có", (dialog, which) -> {
-                        Intent intent = new Intent(this, Dashboard.class);
-                        setResult(RESULT_CANCELED); // hoặc truyền thêm dữ liệu qua intent
                         finish();
                     })
                     .setNegativeButton("Không", null)

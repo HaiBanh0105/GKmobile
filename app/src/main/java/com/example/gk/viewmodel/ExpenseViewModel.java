@@ -117,96 +117,103 @@ public class ExpenseViewModel extends BaseObservable {
             double originalAmount = expense.getAmountIn(); //quy đổi về vnd để tính tổng
 
             ExchangeDAO dao = AppDatabase.getInstance(context).exchangeDAO();
-            ExchangeRate rate = dao.getLatestRate(baseCurrency, targetCurrency);
+            ExchangeRate rate = null; // Khởi tạo null
 
-            boolean needUpdate = rate == null || System.currentTimeMillis() - rate.lastUpdated > 24 * 60 * 60 * 1000;
+            if (baseCurrency.equalsIgnoreCase(targetCurrency)) {
+                // Tạo một tỷ giá giả định là 1.0
+                rate = new ExchangeRate();
+                rate.baseCurrency = baseCurrency;
+                rate.targetCurrency = targetCurrency;
+                rate.rate = 1.0;
+                // Không cần lastUpdated vì tỷ giá 1:1 không bao giờ đổi
+            } else {
+                // Nếu khác nhau (VD: USD -> VND) thì mới làm theo quy trin
+                rate = dao.getLatestRate(baseCurrency, targetCurrency);
 
-            if (needUpdate) {
-                try {
-                    String accessKey = "a666cc608cd1a35a2dcde0629a910b48";
-                    String url = "https://api.exchangerate.host/convert?from=" + baseCurrency + "&to=" + targetCurrency + "&amount=1&access_key=" + accessKey;
+                boolean needUpdate = rate == null || System.currentTimeMillis() - rate.lastUpdated > 24 * 60 * 60 * 1000;
 
-                    HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-                    connection.setRequestMethod("GET");
+                if (needUpdate) {
+                    try {
+                        String accessKey = "a666cc608cd1a35a2dcde0629a910b48";
+                        String url = "https://api.exchangerate.host/convert?from=" + baseCurrency + "&to=" + targetCurrency + "&amount=1&access_key=" + accessKey;
 
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                    StringBuilder response = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        response.append(line);
+                        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+                        connection.setRequestMethod("GET");
+
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                        StringBuilder response = new StringBuilder();
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            response.append(line);
+                        }
+                        reader.close();
+
+                        JSONObject json = new JSONObject(response.toString());
+
+                        if (!json.optBoolean("success", false)) {
+                            Log.e("ExchangeRate", "API lỗi: " + json.optJSONObject("error"));
+                            // Nếu API lỗi và không có rate cũ, không thể lưu được -> return
+                            if (rate == null) return;
+                        } else {
+                            JSONObject info = json.optJSONObject("info");
+                            if (info != null && info.has("quote")) {
+                                double rateValue = info.getDouble("quote");
+
+                                // Cập nhật hoặc tạo mới rate
+                                if (rate == null) {
+                                    rate = new ExchangeRate();
+                                    rate.baseCurrency = baseCurrency;
+                                    rate.targetCurrency = targetCurrency;
+                                }
+                                rate.rate = rateValue;
+                                rate.lastUpdated = System.currentTimeMillis();
+
+                                dao.insert(rate);
+
+                                // Đồng bộ Firestore
+                                ExchangeRate latestExchange = dao.getLatestExchange();
+                                if (latestExchange != null) {
+                                    FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+                                    firestore.collection("exchange_rate")
+                                            .document(String.valueOf(latestExchange.getId()))
+                                            .set(latestExchange);
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        Log.e("ExchangeRate", "Lỗi gọi API: " + e.getMessage(), e);
+                        // Nếu lỗi mạng và không có rate cũ, dùng tạm 1.0 để không crash app
+                        if (rate == null) {
+                            rate = new ExchangeRate();
+                            rate.rate = 1.0;
+                        }
                     }
-                    reader.close();
-
-                    JSONObject json = new JSONObject(response.toString());
-
-                    if (!json.optBoolean("success", false)) {
-                        Log.e("ExchangeRate", "API lỗi: " + json.optJSONObject("error"));
-                        return;
-                    }
-
-                    JSONObject info = json.optJSONObject("info");
-                    if (info == null || !info.has("quote")) {
-                        Log.e("ExchangeRate", "Không có 'quote' trong phản hồi: " + json.toString());
-                        return;
-                    }
-
-                    double rateValue = info.getDouble("quote");
-
-
-                    // Nếu rate chưa có hoặc giá trị mới khác giá trị cũ thì mới insert
-                    if (rate == null || rate.rate != rateValue) {
-                        rate = new ExchangeRate();
-                        rate.baseCurrency = baseCurrency;
-                        rate.targetCurrency = targetCurrency;
-                        rate.rate = rateValue;
-                        rate.lastUpdated = System.currentTimeMillis();
-                        dao.insert(rate);
-                    }
-
-                    // Lấy bản ghi mới nhất
-                    ExchangeRate latestExchange = dao.getLatestExchange();
-
-                    // Đồng bộ bản ghi đó lên Firestore
-                    if (latestExchange != null) {
-                        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-                        firestore.collection("exchange_rate")
-                                .document(String.valueOf(latestExchange.getId())) // Dùng ID làm document ID
-                                .set(latestExchange)
-                                .addOnSuccessListener(aVoid ->
-                                        Log.d("Firestore", "Đã đồng bộ ExchangeRate mới nhất: " + latestExchange.getId()))
-                                .addOnFailureListener(e ->
-                                        Log.e("Firestore", "Lỗi khi đồng bộ ExchangeRate mới nhất", e));
-                    }
-
-                } catch (Exception e) {
-                    Log.e("ExchangeRate", "Lỗi gọi API: " + e.getMessage(), e);
-                    return;
                 }
             }
+            // --------------------------------------------------------------------------------
+
+            // Kiểm tra null lần cuối để tránh Crash ---
+            double finalRate = (rate != null) ? rate.rate : 1.0;
 
             // Quy đổi sang VND
-            double convertedAmount = originalAmount * rate.rate;
+            double convertedAmount = originalAmount * finalRate;
             expense.setAmount(convertedAmount);
-            expense.setAmountIn(expense.getAmountIn());
+            expense.setAmountIn(expense.getAmountIn()); // Giữ nguyên số tiền nhập
 
-            // Lưu giao dịch
-            // Lưu vào Room
+            // Lưu giao dịch vào Room
             ExpenseDAO expenseDAO = AppDatabase.getInstance(context).expenseDAO();
             expenseDAO.insertExpense(expense);
 
-            // Lấy bản ghi mới nhất từ Room
+            // Đồng bộ Firestore (Giữ nguyên code của bạn)
             Expense latestExpense = expenseDAO.getLatestExpense();
-
-            // Đồng bộ bản ghi đó lên Firestore
             if (latestExpense != null) {
                 FirebaseFirestore firestore = FirebaseFirestore.getInstance();
                 firestore.collection("expenses")
-                        .document(String.valueOf(latestExpense.getId())) // Dùng ID làm document ID
+                        .document(String.valueOf(latestExpense.getId()))
                         .set(latestExpense)
-                        .addOnSuccessListener(aVoid -> Log.d("Firestore", "Đã đồng bộ Expense mới nhất: " + latestExpense.getId()))
-                        .addOnFailureListener(e -> Log.e("Firestore", "Lỗi khi đồng bộ Expense mới nhất", e));
+                        .addOnSuccessListener(aVoid -> Log.d("Firestore", "Đã đồng bộ Expense: " + latestExpense.getId()))
+                        .addOnFailureListener(e -> Log.e("Firestore", "Lỗi đồng bộ Expense", e));
             }
-
         });
     }
     public boolean isValid() {

@@ -155,16 +155,19 @@ public class Dashboard extends BaseActivity {
 
     }
 
+
     public void loadSummary() {
         String yearStr = edtYear.getText().toString().trim();
         int monthIndex = spinnerMonth.getSelectedItemPosition();
         if (yearStr.isEmpty()) return;
 
-        viewModel.loadData(this, yearStr, monthIndex);
+        // Truyền callback vào để chờ dữ liệu tải xong mới cập nhật UI
 
-        updateSummaryText();
-        setupPieChart(viewModel.pieData);
-        setupBarChart(viewModel.barData, (float) viewModel.convertedIncome, (float) viewModel.convertedExpense);
+        viewModel.loadData(this, yearStr, monthIndex, () -> {
+            updateSummaryText();
+            setupPieChart(viewModel.pieData);
+            setupBarChart(viewModel.barData, (float) viewModel.convertedIncome, (float) viewModel.convertedExpense);
+        });
     }
 
     private void updateSummaryText() {
@@ -357,10 +360,6 @@ public class Dashboard extends BaseActivity {
     protected void onResume() {
         super.onResume();
 
-        setupChartDefaults();
-        setupMonthSpinner();
-        setupYearWatcher();
-        setupButtons();
         loadSummary();
     }
 
