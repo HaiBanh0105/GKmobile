@@ -15,7 +15,7 @@ import java.util.List;
 public class BaseActivity extends AppCompatActivity {
     protected void setupToolbar(int toolbarId) {
         MaterialToolbar toolbar = findViewById(toolbarId);
-        toolbar.setTitle("Tổng quan tài chính");
+        toolbar.setTitle("Expense Tracker Pro");
         toolbar.setOnMenuItemClickListener(item -> {
             int id = item.getItemId();
             if (id == R.id.menu_currency) {

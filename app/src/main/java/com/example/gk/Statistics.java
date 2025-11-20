@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -31,7 +32,9 @@ public class Statistics extends BaseActivity {
     private RecyclerView rcv;
     private Spinner spinnerMonth;
     private EditText edtYear, edtSearch;
-    private Button btnBack, btnExport;
+    private Button btnExport;
+
+    private ImageButton btnBack;
 
     private String incomeStr, expenseStr, differenceStr;
 
