@@ -17,8 +17,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.gk.Database.AppDatabase;
-import com.example.gk.Database.ExchangeDAO;
-import com.example.gk.ExchangeRate;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -203,7 +201,7 @@ public class Export_report extends AppCompatActivity {
         pdfDocument.finishPage(page);
 
         // Save PDF
-//        File file = new File(getExternalFilesDir(null), "baocao_" + System.currentTimeMillis() + ".pdf");
+
         File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
                 "baocao_" + System.currentTimeMillis() + ".pdf");
         try {

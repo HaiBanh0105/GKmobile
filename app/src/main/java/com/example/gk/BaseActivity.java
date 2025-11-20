@@ -1,6 +1,5 @@
 package com.example.gk;
 
-import android.content.Intent;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
@@ -15,7 +14,7 @@ import java.util.List;
 public class BaseActivity extends AppCompatActivity {
     protected void setupToolbar(int toolbarId) {
         MaterialToolbar toolbar = findViewById(toolbarId);
-        toolbar.setTitle("Expense Tracker Pro");
+        toolbar.setTitle("Expense Tracker");
         toolbar.setOnMenuItemClickListener(item -> {
             int id = item.getItemId();
             if (id == R.id.menu_currency) {

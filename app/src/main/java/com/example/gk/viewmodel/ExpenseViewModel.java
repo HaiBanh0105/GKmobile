@@ -2,11 +2,9 @@ package com.example.gk.viewmodel;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
-
 
 import com.example.gk.BR;
 import com.example.gk.Database.AppDatabase;

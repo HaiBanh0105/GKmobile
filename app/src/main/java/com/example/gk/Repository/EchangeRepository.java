@@ -5,7 +5,6 @@ import android.util.Log;
 
 import com.example.gk.Database.AppDatabase;
 import com.example.gk.Database.ExchangeDAO;
-import com.example.gk.Database.ExpenseDAO;
 import com.example.gk.ExchangeRate;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;

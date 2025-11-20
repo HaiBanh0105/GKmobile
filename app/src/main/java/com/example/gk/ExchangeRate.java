@@ -1,11 +1,8 @@
 package com.example.gk;
 
-import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
-
-import com.example.gk.Database.ExpenseDAO;
 
 @Entity(tableName = "exchange_rates")
 public class ExchangeRate {

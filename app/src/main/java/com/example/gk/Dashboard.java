@@ -17,7 +17,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -29,14 +28,10 @@ import com.example.gk.Repository.ExpenseRepository;
 import com.example.gk.viewmodel.DashboardViewModel;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.PieData;
-import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import org.w3c.dom.Text;
 
 import java.text.NumberFormat;
 import java.util.Arrays;
@@ -255,6 +250,7 @@ public class Dashboard extends BaseActivity {
         Spinner spinnerFrom = dialogView.findViewById(R.id.spinnerFromCurrency);
         Spinner spinnerTo = dialogView.findViewById(R.id.spinnerToCurrency);
         ImageView swap = dialogView.findViewById(R.id.btnSwap);
+        Button close = dialogView.findViewById(R.id.btnCloseDialog);
 
         ExchangeDAO dao = AppDatabase.getInstance(this).exchangeDAO();
         List<String> currencyList = dao.getAllBaseCurrencies();
@@ -347,12 +343,24 @@ public class Dashboard extends BaseActivity {
             // Tùy chọn: Chỉnh độ rộng dialog (ví dụ 90% màn hình)
             dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         }
+
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
         dialog.show();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        setupChartDefaults();
+        setupMonthSpinner();
+        setupYearWatcher();
+        setupButtons();
         loadSummary();
     }
 

@@ -1,13 +1,11 @@
 package com.example.gk.Database;
 
 import androidx.room.Dao;
-import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import com.example.gk.ExchangeRate;
-import com.example.gk.Expense;
 
 import java.util.List;
 

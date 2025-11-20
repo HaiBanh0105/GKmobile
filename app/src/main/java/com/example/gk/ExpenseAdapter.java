@@ -1,6 +1,5 @@
 package com.example.gk;
 
-import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,10 +7,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.example.gk.Database.AppDatabase;
-import com.example.gk.Database.ExchangeDAO;
-import com.example.gk.Database.ExpenseDAO;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
