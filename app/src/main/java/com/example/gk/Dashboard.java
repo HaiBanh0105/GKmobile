@@ -3,11 +3,13 @@ package com.example.gk;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -171,9 +173,9 @@ public class Dashboard extends BaseActivity {
     }
 
     private void updateSummaryText() {
-        tvTotalIncome.setText("Thu: " + formatCurrency(viewModel.convertedIncome));
-        tvTotalExpense.setText("Chi: " + formatCurrency(viewModel.convertedExpense));
-        tvDifference.setText("Còn lại: " + formatCurrency(viewModel.convertedDifference));
+        tvTotalIncome.setText(formatCurrency(viewModel.convertedIncome));
+        tvTotalExpense.setText(formatCurrency(viewModel.convertedExpense));
+        tvDifference.setText(formatCurrency(viewModel.convertedDifference));
     }
 
     private void setupPieChart(PieData data) {
@@ -339,6 +341,12 @@ public class Dashboard extends BaseActivity {
             }
         });
 
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+            // Tùy chọn: Chỉnh độ rộng dialog (ví dụ 90% màn hình)
+            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
         dialog.show();
     }
 

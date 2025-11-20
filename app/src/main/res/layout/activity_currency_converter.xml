@@ -1,113 +1,158 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="24dp"
-    android:background="#FFFFFF">
+    app:cardCornerRadius="16dp"
+    app:cardElevation="8dp"
+    app:cardBackgroundColor="#FFFFFF">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_margin="20dp">
-    <TextView
-        android:id="@+id/titleText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Chuyển đổi tiền tệ"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        android:textColor="#000000"
-        />
-
-    </LinearLayout>
-
-
-
-    <!-- Nhập số tiền + chọn đơn vị -->
-    <TextView
-        android:id="@+id/amountLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Số tiền"
-        android:textSize="14sp"
-        android:textColor="#000000"
-        android:layout_marginBottom="8dp" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="24dp">
-
-        <EditText
-            android:id="@+id/amountInput"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:hint="1.000"
-            android:inputType="numberDecimal"
-            android:textSize="16sp"
-            android:background="@android:drawable/edit_text"
-            android:padding="12dp" />
-
-        <Spinner
-            android:id="@+id/spinnerFromCurrency"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="8dp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_margin="20dp">
-
-        <ImageView
-            android:id="@+id/btnSwap"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginHorizontal="12dp"
-            android:contentDescription="Hoán đổi"
-            android:padding="8dp"
-            android:src="@drawable/swap" />
-
-    </LinearLayout>
-
-    <!-- Kết quả chuyển đổi + chọn đơn vị -->
-    <TextView
-        android:id="@+id/resultLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Chuyển đổi thành"
-        android:textSize="14sp"
-        android:textColor="#000000"
-        android:layout_marginBottom="8dp" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:padding="24dp">
 
         <TextView
-            android:id="@+id/resultText"
-            android:layout_width="0dp"
+            android:id="@+id/titleText"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:background="#F0F0F0"
-            android:padding="12dp"
-            android:text="1.160,75"
-            android:textColor="#008000"
-            android:textSize="16sp" />
+            android:text="Chuyển đổi tiền tệ"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:gravity="center"
+            android:layout_marginBottom="24dp"/>
 
-        <Spinner
-            android:id="@+id/spinnerToCurrency"
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/amountLabel"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="8dp" />
+            android:text="Số tiền cần đổi"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#555555"
+            android:layout_marginBottom="8dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:baselineAligned="false">
+
+            <EditText
+                android:id="@+id/amountInput"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="1.6"
+                android:hint="1.000"
+                android:inputType="numberDecimal"
+                android:textSize="18sp"
+                android:textColor="#000000"
+                android:padding="12dp"
+                android:background="@drawable/bg_input_rounded"
+                android:minHeight="50dp"
+                android:layout_marginEnd="8dp"/>
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="1.4"
+                android:background="@drawable/bg_input_rounded"
+                android:minHeight="50dp">
+                <Spinner
+                    android:id="@+id/spinnerFromCurrency"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#EEEEEE"
+                android:layout_centerVertical="true"/>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="4dp"
+                android:layout_centerInParent="true"
+                app:cardBackgroundColor="#2196F3"> <ImageView
+                android:id="@+id/btnSwap"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="10dp"
+                android:src="@drawable/swap"
+                app:tint="#FFFFFF"
+                android:contentDescription="Hoán đổi"
+                android:background="?attr/selectableItemBackground"/>
+            </androidx.cardview.widget.CardView>
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/resultLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Kết quả"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#555555"
+            android:layout_marginBottom="8dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:baselineAligned="false">
+
+            <TextView
+                android:id="@+id/resultText"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="1.6"
+                android:text="1.160,75"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#4CAF50"
+                android:padding="12dp"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_input_rounded"
+                android:minHeight="50dp"
+                android:layout_marginEnd="8dp"/>
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="1.4"
+                android:background="@drawable/bg_input_rounded"
+                android:minHeight="50dp">
+                <Spinner
+                    android:id="@+id/spinnerToCurrency"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnCloseDialog"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="24dp"
+            android:text="Đóng"
+            android:textStyle="bold"
+            android:textColor="#757575"
+            android:backgroundTint="#F5F5F5"
+            app:cornerRadius="8dp"
+            style="@style/Widget.MaterialComponents.Button.TextButton"/>
+
     </LinearLayout>
-</LinearLayout>
+</androidx.cardview.widget.CardView>

@@ -87,7 +87,7 @@ public class Export_report extends AppCompatActivity {
         tvMonthYear.setText((String) tvMonthYear.getTag());
         tvTotalIncome.setText("Tổng thu: " + incomeStr + " " + AppConstants.currentCurrency);
         tvTotalExpense.setText("Tổng chi: " + expenseStr + " " + AppConstants.currentCurrency);
-        tvDifference.setText("Chênh lệch: " + differenceStr + " " + AppConstants.currentCurrency);
+        tvDifference.setText(differenceStr + " " + AppConstants.currentCurrency);
     }
 
     private void setupListeners() {
