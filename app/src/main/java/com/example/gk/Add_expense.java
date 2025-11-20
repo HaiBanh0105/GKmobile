@@ -34,31 +34,13 @@ public class Add_expense extends BaseActivity {
         binding.setExpenseViewModel(viewModel);
         binding.setLifecycleOwner(this);
 
-        setupCategorySpinner();
         setupCurrencySpinner();
         setupRadioGroup();
+        binding.radioIncome.setChecked(true);
         setupButtons();
     }
 
-    private void setupCategorySpinner() {
-        List<String> categories = Arrays.asList(
-                "Lương",
-                "Ăn uống",
-                "Giải trí",
-                "Hóa đơn",
-                "Di chuyển",
-                "Mua sắm",
-                "Sức khỏe",
-                "Giáo dục",
-                "Du lịch",
-                "Gia đình",
-                "Tiết kiệm",
-                "Đầu tư",
-                "Quà tặng",
-                "Thuế",
-                "Vay nợ",
-                "Khác"
-        );
+    private void setupCategorySpinner(List<String> categories) {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 this, android.R.layout.simple_spinner_dropdown_item, categories);
         binding.category.setAdapter(adapter);
@@ -103,9 +85,43 @@ public class Add_expense extends BaseActivity {
 
 
     private void setupRadioGroup() {
+        // Danh mục Thu
+        List<String> incomeCategories = Arrays.asList(
+                "Lương",
+                "Đầu tư",
+                "Tiết kiệm",
+                "Quà tặng",
+                "Khác"
+        );
+
+        // Danh mục Chi
+        List<String> expenseCategories = Arrays.asList(
+                "Ăn uống",
+                "Giải trí",
+                "Hóa đơn",
+                "Di chuyển",
+                "Mua sắm",
+                "Sức khỏe",
+                "Giáo dục",
+                "Du lịch",
+                "Gia đình",
+                "Thuế",
+                "Vay nợ",
+                "Khác"
+        );
+
+        // Mặc định hiển thị Chi
+        setupCategorySpinner(expenseCategories);
+
         binding.radioGroupType.setOnCheckedChangeListener((group, checkedId) -> {
             boolean isIncome = (checkedId == R.id.radioIncome);
             viewModel.setIncome(isIncome);
+
+            if (isIncome) {
+                setupCategorySpinner(incomeCategories);
+            } else {
+                setupCategorySpinner(expenseCategories);
+            }
         });
     }
 

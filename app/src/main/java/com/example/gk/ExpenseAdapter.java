@@ -88,7 +88,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
 
     private String formatCurrency(View view, double amountVND, String currency) {
 
-        return String.format("%,.0f %s", amountVND , currency);
+        return String.format("%,.2f %s", amountVND , currency);
     }
 
     private String formatDate(long timestamp) {

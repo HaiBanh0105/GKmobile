@@ -20,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.concurrent.Executors;
 
 public class ExpenseViewModel extends BaseObservable {
@@ -61,11 +62,13 @@ public class ExpenseViewModel extends BaseObservable {
         return String.valueOf(expense.getAmountIn());
     }
 
+
     public void setAmountIn(String amountStr) {
         double value = Double.parseDouble(amountStr);
         expense.setAmountIn(value);
         notifyPropertyChanged(BR.amountIn);
     }
+
 
     @Bindable
     public String getCurrency()

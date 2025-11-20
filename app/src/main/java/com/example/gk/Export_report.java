@@ -13,6 +13,9 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -42,6 +45,11 @@ public class Export_report extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_export_report);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.export), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
 
         initViews();
         loadIntentData();
@@ -132,24 +140,30 @@ public class Export_report extends AppCompatActivity {
         canvas.drawText(title, centerX, y, contentPaint); y += 30;
         canvas.drawLine(margin, y, pageWidth - margin, y, linePaint); y += 20;
 
-        // Column setup (4 cột: Mô tả – Số tiền – Danh mục – Ngày)
+        // Column setup (5 cột: Mô tả – Số tiền – Danh mục – Loại – Ngày)
         int tableWidth = pageWidth - 2 * margin;
-        int col1Width = (int)(tableWidth * 0.30); // Mô tả
-        int col2Width = (int)(tableWidth * 0.25); // Số tiền
-        int col3Width = (int)(tableWidth * 0.25); // Danh mục
-        int col4Width = (int)(tableWidth * 0.20); // Ngày
+        int col1Width = (int)(tableWidth * 0.25); // Mô tả
+        int col2Width = (int)(tableWidth * 0.20); // Số tiền
+        int col3Width = (int)(tableWidth * 0.20); // Danh mục
+        int col4Width = (int)(tableWidth * 0.15); // Loại
+        int col5Width = (int)(tableWidth * 0.20); // Ngày
 
         int col1 = margin;
         int col2 = col1 + col1Width;
         int col3 = col2 + col2Width;
         int col4 = col3 + col3Width;
+        int col5 = col4 + col4Width;
+
+
 
         // Column titles
         contentPaint.setTextAlign(Paint.Align.LEFT);
         canvas.drawText("Mô tả", col1 + 5, y, contentPaint);
         canvas.drawText("Số tiền", col2 + 5, y, contentPaint);
         canvas.drawText("Danh mục", col3 + 5, y, contentPaint);
-        canvas.drawText("Ngày", col4 + 5, y, contentPaint);
+        canvas.drawText("Loại", col4 + 5, y, contentPaint);
+        canvas.drawText("Ngày", col5 + 5, y, contentPaint);
+
         y += rowHeight;
         canvas.drawLine(margin, y, pageWidth - margin, y, linePaint); y += 5;
 
@@ -167,7 +181,10 @@ public class Export_report extends AppCompatActivity {
             canvas.drawRect(col1, y, col2, y + rowHeight, borderPaint);
             canvas.drawRect(col2, y, col3, y + rowHeight, borderPaint);
             canvas.drawRect(col3, y, col4, y + rowHeight, borderPaint);
-            canvas.drawRect(col4, y, pageWidth - margin, y + rowHeight, borderPaint);
+            canvas.drawRect(col4, y, col5, y + rowHeight, borderPaint);
+            canvas.drawRect(col5, y, pageWidth - margin, y + rowHeight, borderPaint);
+
+
 
             // Draw cell content
             contentPaint.setTextAlign(Paint.Align.LEFT);
@@ -181,7 +198,10 @@ public class Export_report extends AppCompatActivity {
             category = category.substring(0, 1).toUpperCase() + category.substring(1).toLowerCase();
             canvas.drawText(category, col3 + 5, y + 20, contentPaint);
 
-            canvas.drawText(formatDate(e.timestamp), col4 + 5, y + 20, contentPaint);
+            String type = e.isIncome ? "Thu" : "Chi";
+            canvas.drawText(type, col4 + 5, y + 20, contentPaint);
+
+            canvas.drawText(formatDate(e.timestamp), col5 + 5, y + 20, contentPaint);
 
             y += rowHeight;
         }
